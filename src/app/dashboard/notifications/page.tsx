@@ -4,7 +4,7 @@ import { NotificationSystem } from "@/components/dashboard/enhanced-notification
 
 export default function NotificationsPage() {
   return (
-    <div className="container mx-auto p-6">
+    <div className="w-full p-6">
       <NotificationSystem />
     </div>
   );

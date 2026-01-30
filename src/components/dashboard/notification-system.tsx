@@ -68,6 +68,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample notification data
 const notifications = [
@@ -205,6 +206,7 @@ export function NotificationSystem() {
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
   const [settings, setSettings] = useState(notificationSettings);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const { toast } = useToast();
 
   // Filter notifications
   const filteredNotifications = notifications.filter(notification => {
@@ -225,56 +227,93 @@ export function NotificationSystem() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "alert": return <AlertTriangle className="h-5 w-5 text-red-500" />;
-      case "success": return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "warning": return <Clock className="h-5 w-5 text-yellow-500" />;
+      case "success": return <CheckCircle className="h-5 w-5 text-emerald-500" />;
+      case "warning": return <Clock className="h-5 w-5 text-amber-500" />;
       case "info": return <Info className="h-5 w-5 text-blue-500" />;
-      default: return <Bell className="h-5 w-5 text-gray-500" />;
+      default: return <Bell className="h-5 w-5 text-slate-500" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "text-red-600 bg-red-50 border-red-200";
-      case "medium": return "text-yellow-600 bg-yellow-50 border-yellow-200";
-      case "low": return "text-green-600 bg-green-50 border-green-200";
-      default: return "text-gray-600 bg-gray-50 border-gray-200";
+      case "high": return "text-red-600 bg-red-50 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800";
+      case "medium": return "text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800";
+      case "low": return "text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800";
+      default: return "text-slate-600 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700";
     }
   };
 
   const handleMarkAsRead = (id: number) => {
     // In a real app, this would update the notification status
     console.log("Mark as read:", id);
+    toast({
+      title: "Marked as Read",
+      description: `Notification ${id} marked as read.`,
+    });
   };
 
   const handleStarToggle = (id: number) => {
     // In a real app, this would toggle the starred status
     console.log("Toggle star:", id);
+    toast({
+      title: "Star Updated",
+      description: "Notification star status updated.",
+    });
   };
 
   const handleDeleteNotification = (id: number) => {
     // In a real app, this would delete the notification
     console.log("Delete notification:", id);
+    toast({
+      title: "Notification Deleted",
+      description: "The notification has been removed.",
+    });
+  };
+
+  const handleMarkAllAsRead = () => {
+    toast({
+      title: "All Marked as Read",
+      description: `${unreadCount} notifications marked as read.`,
+    });
+  };
+
+  const handleArchiveAllRead = () => {
+    toast({
+      title: "Archived",
+      description: "All read notifications have been archived.",
+    });
+  };
+
+  const handleDisableAll = () => {
+    toast({
+      title: "Notifications Disabled",
+      description: "All notification channels have been disabled.",
+      variant: "destructive",
+    });
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Notifications</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Notifications</h2>
           <p className="text-muted-foreground">
             {unreadCount} unread, {starredCount} starred
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20 mr-2">
+            <Bell className="h-5 w-5 text-white" />
+          </div>
           <Dialog open={isComposeOpen} onOpenChange={setIsComposeOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="rounded-xl shadow-md shadow-primary/20">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Compose
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md rounded-xl">
               <DialogHeader>
                 <DialogTitle>Send Notification</DialogTitle>
                 <DialogDescription>
@@ -329,7 +368,7 @@ export function NotificationSystem() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => toast({ title: "Settings", description: "Opening notification settings..." })}>
             <Settings className="h-4 w-4" />
           </Button>
         </div>
@@ -628,15 +667,15 @@ export function NotificationSystem() {
             </CardHeader>
             <CardContent>
               <div className="flex gap-2">
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleMarkAllAsRead}>
                   <Check className="h-4 w-4 mr-2" />
                   Mark All as Read
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleArchiveAllRead}>
                   <Archive className="h-4 w-4 mr-2" />
                   Archive All Read
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleDisableAll}>
                   <VolumeX className="h-4 w-4 mr-2" />
                   Disable All
                 </Button>

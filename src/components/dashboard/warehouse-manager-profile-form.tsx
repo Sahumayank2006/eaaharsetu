@@ -218,13 +218,13 @@ export function WarehouseManagerProfileForm() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Card>
+        <Card className="border-0 shadow-md">
           <CardContent className="pt-6">
             <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-muted rounded-xl w-3/4"></div>
+              <div className="h-10 bg-muted rounded-xl"></div>
+              <div className="h-4 bg-muted rounded-xl w-1/2"></div>
+              <div className="h-10 bg-muted rounded-xl"></div>
             </div>
           </CardContent>
         </Card>
@@ -234,11 +234,26 @@ export function WarehouseManagerProfileForm() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Warehouse Manager Profile</h2>
+          <p className="text-muted-foreground">
+            Manage your profile, warehouse details, and notification preferences.
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+          <User className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
       {/* Basic Information */}
-      <Card>
+      <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+            <div className="p-1.5 rounded-lg bg-primary/10">
+              <User className="h-4 w-4 text-primary" />
+            </div>
             Basic Information
           </CardTitle>
           <CardDescription>
@@ -249,10 +264,10 @@ export function WarehouseManagerProfileForm() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Profile picture upload */}
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <Avatar className="h-20 w-20">
+              <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-xl bg-muted/30">
+                <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg">
                   <AvatarImage src={profilePicture || undefined} alt="Profile picture" />
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-muted">
                     {(form.getValues("fullName")?.[0] || "W").toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -264,7 +279,7 @@ export function WarehouseManagerProfileForm() {
                     className="hidden"
                     onChange={handleFileChange}
                   />
-                  <Button type="button" variant="secondary" onClick={handleSelectProfileImage} disabled={uploading}>
+                  <Button type="button" variant="secondary" onClick={handleSelectProfileImage} disabled={uploading} className="rounded-xl">
                     <Camera className="h-4 w-4 mr-2" />
                     {uploading ? "Uploading..." : "Change Photo"}
                   </Button>
@@ -287,7 +302,7 @@ export function WarehouseManagerProfileForm() {
                         Full Name*
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your full name" {...field} />
+                        <Input placeholder="Enter your full name" className="rounded-xl border-muted" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -304,7 +319,7 @@ export function WarehouseManagerProfileForm() {
                         Email Address*
                       </FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="Enter your email" {...field} />
+                        <Input type="email" placeholder="Enter your email" className="rounded-xl border-muted" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -321,7 +336,7 @@ export function WarehouseManagerProfileForm() {
                         Mobile Number*
                       </FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="Enter 10-digit mobile number" {...field} />
+                        <Input type="tel" placeholder="Enter 10-digit mobile number" className="rounded-xl border-muted" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -338,7 +353,7 @@ export function WarehouseManagerProfileForm() {
                         Employee ID*
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your employee ID" {...field} />
+                        <Input placeholder="Enter your employee ID" className="rounded-xl border-muted" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -351,10 +366,12 @@ export function WarehouseManagerProfileForm() {
       </Card>
 
       {/* Warehouse Information */}
-      <Card>
+      <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building className="h-5 w-5" />
+            <div className="p-1.5 rounded-lg bg-blue-500/10">
+              <Building className="h-4 w-4 text-blue-500" />
+            </div>
             Warehouse Information
           </CardTitle>
           <CardDescription>
@@ -374,7 +391,7 @@ export function WarehouseManagerProfileForm() {
                       Warehouse ID*
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter warehouse ID" {...field} />
+                      <Input placeholder="Enter warehouse ID" className="rounded-xl border-muted" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -391,7 +408,7 @@ export function WarehouseManagerProfileForm() {
                       Warehouse Name*
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter warehouse name" {...field} />
+                      <Input placeholder="Enter warehouse name" className="rounded-xl border-muted" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -409,7 +426,7 @@ export function WarehouseManagerProfileForm() {
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-muted">
                           <SelectValue placeholder="Select department" />
                         </SelectTrigger>
                       </FormControl>
@@ -437,7 +454,7 @@ export function WarehouseManagerProfileForm() {
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-muted">
                           <SelectValue placeholder="Select experience" />
                         </SelectTrigger>
                       </FormControl>
@@ -467,7 +484,7 @@ export function WarehouseManagerProfileForm() {
                   <FormControl>
                     <Textarea 
                       placeholder="Enter complete warehouse address"
-                      className="resize-none"
+                      className="resize-none rounded-xl border-muted min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
@@ -484,7 +501,7 @@ export function WarehouseManagerProfileForm() {
                   <FormItem>
                     <FormLabel>City*</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter city" {...field} />
+                      <Input placeholder="Enter city" className="rounded-xl border-muted" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -498,7 +515,7 @@ export function WarehouseManagerProfileForm() {
                   <FormItem>
                     <FormLabel>State*</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter state" {...field} />
+                      <Input placeholder="Enter state" className="rounded-xl border-muted" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -512,7 +529,7 @@ export function WarehouseManagerProfileForm() {
                   <FormItem>
                     <FormLabel>Pincode*</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter 6-digit pincode" {...field} />
+                      <Input placeholder="Enter 6-digit pincode" className="rounded-xl border-muted" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -524,10 +541,12 @@ export function WarehouseManagerProfileForm() {
       </Card>
 
       {/* Notification Settings */}
-      <Card>
+      <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
+            <div className="p-1.5 rounded-lg bg-amber-500/10">
+              <Settings className="h-4 w-4 text-amber-500" />
+            </div>
             Notification Settings
           </CardTitle>
           <CardDescription>
@@ -542,7 +561,7 @@ export function WarehouseManagerProfileForm() {
                   control={form.control}
                   name="emailNotifications"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border border-muted p-4 hover:bg-muted/30 transition-colors">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Email Notifications</FormLabel>
                         <FormDescription>
@@ -563,7 +582,7 @@ export function WarehouseManagerProfileForm() {
                   control={form.control}
                   name="smsNotifications"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border border-muted p-4 hover:bg-muted/30 transition-colors">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">SMS Notifications</FormLabel>
                         <FormDescription>
@@ -584,7 +603,7 @@ export function WarehouseManagerProfileForm() {
                   control={form.control}
                   name="slotAlerts"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border border-muted p-4 hover:bg-muted/30 transition-colors">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Slot Booking Alerts</FormLabel>
                         <FormDescription>
@@ -605,7 +624,7 @@ export function WarehouseManagerProfileForm() {
                   control={form.control}
                   name="temperatureAlerts"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border border-muted p-4 hover:bg-muted/30 transition-colors">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Temperature Alerts</FormLabel>
                         <FormDescription>
@@ -626,7 +645,7 @@ export function WarehouseManagerProfileForm() {
                   control={form.control}
                   name="humidityAlerts"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border border-muted p-4 hover:bg-muted/30 transition-colors">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Humidity Alerts</FormLabel>
                         <FormDescription>
@@ -647,7 +666,7 @@ export function WarehouseManagerProfileForm() {
                   control={form.control}
                   name="inventoryAlerts"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border border-muted p-4 hover:bg-muted/30 transition-colors">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Inventory Alerts</FormLabel>
                         <FormDescription>
@@ -671,6 +690,7 @@ export function WarehouseManagerProfileForm() {
                   size="lg" 
                   disabled={isSaving}
                   onClick={form.handleSubmit(onSubmit)}
+                  className="rounded-xl shadow-md shadow-primary/20"
                 >
                   {isSaving ? (
                     <>
@@ -690,6 +710,7 @@ export function WarehouseManagerProfileForm() {
                   variant="outline" 
                   size="lg"
                   onClick={() => form.reset()}
+                  className="rounded-xl"
                 >
                   <Shield className="mr-2 h-4 w-4" />
                   Reset Changes

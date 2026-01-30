@@ -37,19 +37,36 @@ const resources = [
 
 export function Sustainability() {
   return (
-    <div className="grid gap-8 lg:grid-cols-3">
+    <div className="w-full space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Sustainability</h2>
+          <p className="text-muted-foreground">
+            Learn sustainable practices and track your green achievements
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+          <Sprout className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
-            <Card>
+            <Card className="border-0 shadow-md">
                 <CardHeader>
-                <CardTitle>Sustainability Resources</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-primary" />
+                  Sustainability Resources
+                </CardTitle>
                 <CardDescription>
-                    Explore articles, guides, and best practices to make your farm more sustainable and efficient.
+                    Explore articles, guides, and best practices to make your farm more sustainable and efficient
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         {resources.map((resource, index) => (
-                            <div key={index} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                            <div key={index} className="p-4 border border-muted rounded-xl hover:bg-muted/50 hover:shadow-sm transition-all duration-300">
                                 <h4 className="font-semibold">{resource.title}</h4>
                                 <p className="text-sm text-muted-foreground mt-1">{resource.description}</p>
                             </div>
@@ -60,18 +77,28 @@ export function Sustainability() {
         </div>
 
         <div>
-            <Card className="sticky top-24">
+            <Card className="sticky top-24 border-0 shadow-md">
                 <CardHeader>
-                <CardTitle>Your Badges</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Medal className="h-5 w-5 text-amber-500" />
+                  Your Badges
+                </CardTitle>
                 <CardDescription>
-                    Earn rewards for your contributions to reducing food waste and helping the community.
+                    Earn rewards for your contributions to reducing food waste and helping the community
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
                 <div className="space-y-6">
                     {badges.map((badge, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                        <badge.icon className={`h-10 w-10 flex-shrink-0 ${badge.color}`} />
+                    <div key={index} className="flex items-start gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors">
+                        <div className={`p-2 rounded-xl ${
+                          badge.color === 'text-amber-500' ? 'bg-amber-100 dark:bg-amber-900/30' :
+                          badge.color === 'text-blue-500' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                          badge.color === 'text-green-500' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
+                          'bg-violet-100 dark:bg-violet-900/30'
+                        }`}>
+                          <badge.icon className={`h-6 w-6 ${badge.color}`} />
+                        </div>
                         <div>
                         <h4 className="font-semibold">{badge.title}</h4>
                         <p className="text-sm text-muted-foreground">
@@ -84,6 +111,7 @@ export function Sustainability() {
                 </CardContent>
             </Card>
         </div>
+      </div>
     </div>
   );
 }

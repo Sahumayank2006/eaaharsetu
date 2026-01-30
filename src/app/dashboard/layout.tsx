@@ -29,16 +29,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       {/* Suspense is used at the top level for components that need it */}
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      }>
         <LanguageUpdater />
-        <div className="flex min-h-screen bg-background">
-          <Sidebar>
+        <div className="flex min-h-screen w-full bg-gradient-to-br from-background via-background to-muted/30">
+          <Sidebar className="border-r border-sidebar-border/50">
             <SidebarNav />
           </Sidebar>
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col min-w-0">
             <Header />
-            <main className="flex-1 p-4 md:p-6">
-              {children}
+            <main className="flex-1 overflow-auto">
+              <div className="mx-auto w-full max-w-[1600px] p-4 md:p-6 lg:p-8">
+                {children}
+              </div>
             </main>
           </div>
         </div>

@@ -13,7 +13,7 @@ export default function ProfilePage() {
   // For admin role, show the comprehensive profile management
   if (role === "admin") {
     return (
-      <div className="container mx-auto p-6">
+      <div className="w-full p-6">
         <ProfileManagement />
       </div>
     );

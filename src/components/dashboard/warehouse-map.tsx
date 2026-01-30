@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,33 +26,24 @@ import {
   Building2,
   Search,
   X,
-  Filter
+  Filter,
+  Loader2
 } from "lucide-react";
 
-// Dynamically import map components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-
-const CircleMarker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.CircleMarker),
-  { ssr: false }
-);
-
-const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
-  { ssr: false }
-);
-
-const Tooltip = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Tooltip),
-  { ssr: false }
+// Dynamically import the entire map component to avoid SSR issues
+const WarehouseMapInner = dynamic(
+  () => import("./warehouse-map-inner"),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full bg-muted/30 rounded-lg">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">Loading map...</p>
+        </div>
+      </div>
+    )
+  }
 );
 
 type WarehouseStatus = 'normal' | 'warning' | 'critical';
@@ -422,14 +414,9 @@ interface WarehouseMapProps {
 
 export function WarehouseMap({ onWarehouseSelect }: WarehouseMapProps) {
   const [selectedWarehouse, setSelectedWarehouse] = useState<WarehouseData | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleWarehouseClick = (warehouse: WarehouseData) => {
     setSelectedWarehouse(warehouse);
@@ -483,24 +470,8 @@ export function WarehouseMap({ onWarehouseSelect }: WarehouseMapProps) {
     Guna: filteredWarehouses.filter(w => w.id.startsWith('GUN')).length,
   };
 
-  if (!isClient) {
-    return (
-      <Card className="h-[600px]">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Gwalior Region Warehouses
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center justify-center h-full">
-          <div className="text-muted-foreground">Loading map...</div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {/* Search and Filter Section */}
       <Card>
         <CardHeader>
@@ -694,134 +665,10 @@ export function WarehouseMap({ onWarehouseSelect }: WarehouseMapProps) {
               </div>
             </div>
           ) : (
-            <MapContainer
-              center={[25.8, 77.8]} // Adjusted center to show all cities
-              zoom={8}
-              style={{ height: '100%', width: '100%' }}
-              className="rounded-lg"
-            >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            <WarehouseMapInner 
+              warehouses={filteredWarehouses} 
+              onWarehouseClick={handleWarehouseClick} 
             />
-            
-            {filteredWarehouses.map((warehouse) => (
-              <CircleMarker
-                key={warehouse.id}
-                center={[warehouse.lat, warehouse.lng]}
-                radius={12}
-                pathOptions={{
-                  color: getStatusColor(warehouse.status),
-                  fillColor: getStatusColor(warehouse.status),
-                  fillOpacity: 0.8,
-                  weight: 3,
-                }}
-                eventHandlers={{
-                  click: () => handleWarehouseClick(warehouse),
-                }}
-              >
-                <Tooltip direction="top" offset={[0, -10]} opacity={1}>
-                  <div className="text-sm">
-                    <div className="font-semibold">{warehouse.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Status: {warehouse.status}
-                    </div>
-                  </div>
-                </Tooltip>
-                
-                <Popup>
-                  <div className="p-2 min-w-[280px]">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-lg">{warehouse.name}</h3>
-                      <div className="flex items-center gap-1">
-                        {getStatusIcon(warehouse.status)}
-                        <Badge 
-                          variant={warehouse.status === 'normal' ? 'default' : 
-                                  warehouse.status === 'warning' ? 'secondary' : 'destructive'}
-                        >
-                          {warehouse.status.toUpperCase()}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      {/* Owner */}
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">Owner: {warehouse.owner}</span>
-                      </div>
-
-                      {/* Environmental Conditions */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center gap-2">
-                          <Thermometer className="h-4 w-4 text-red-500" />
-                          <span className="text-sm">{warehouse.temperature}°C</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Droplets className="h-4 w-4 text-blue-500" />
-                          <span className="text-sm">{warehouse.humidity}%</span>
-                        </div>
-                      </div>
-
-                      {/* Stock Level */}
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Package className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">Stock Level</span>
-                          </div>
-                          <span className="text-sm font-medium">{warehouse.stockLevel}%</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className={`h-2 rounded-full ${
-                              warehouse.stockLevel > 90 ? 'bg-red-500' :
-                              warehouse.stockLevel > 70 ? 'bg-amber-500' : 'bg-green-500'
-                            }`}
-                            style={{ width: `${warehouse.stockLevel}%` }}
-                          />
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {warehouse.currentStock} / {warehouse.capacity} tons
-                        </div>
-                      </div>
-
-                      {/* Performance */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {getPerformanceIcon(warehouse.recentPerformance)}
-                          <span className="text-sm">Efficiency: {warehouse.efficiency}%</span>
-                        </div>
-                        <span className={`text-sm font-medium ${
-                          warehouse.performanceChange > 0 ? 'text-green-600' :
-                          warehouse.performanceChange < 0 ? 'text-red-600' : 'text-gray-600'
-                        }`}>
-                          {warehouse.performanceChange > 0 ? '+' : ''}{warehouse.performanceChange}%
-                        </span>
-                      </div>
-
-                      {/* Alerts */}
-                      {warehouse.alertCount > 0 && (
-                        <div className="flex items-center justify-between p-2 bg-red-50 rounded-md">
-                          <div className="flex items-center gap-2">
-                            <AlertTriangle className="h-4 w-4 text-red-500" />
-                            <span className="text-sm text-red-700">Active Alerts</span>
-                          </div>
-                          <Badge variant="destructive">{warehouse.alertCount}</Badge>
-                        </div>
-                      )}
-
-                      {/* Last Update */}
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>Last updated: {warehouse.lastUpdate}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Popup>
-              </CircleMarker>
-            ))}
-          </MapContainer>
           )}
         </CardContent>
       </Card>

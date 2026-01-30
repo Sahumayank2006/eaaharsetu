@@ -132,37 +132,43 @@ export function WarehouseAlerts({
   const getSeverityClasses = (severity: AlertInfo['severity']) => {
     switch (severity) {
       case 'critical':
-        return 'bg-red-50 border-red-300 text-red-800';
+        return 'bg-red-50 border-red-300 text-red-800 dark:bg-red-950/30 dark:border-red-800 dark:text-red-300';
       case 'high':
-        return 'bg-orange-50 border-orange-300 text-orange-800';
+        return 'bg-orange-50 border-orange-300 text-orange-800 dark:bg-orange-950/30 dark:border-orange-800 dark:text-orange-300';
       case 'medium':
-        return 'bg-yellow-50 border-yellow-300 text-yellow-800';
+        return 'bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300';
       case 'low':
-        return 'bg-green-50 border-green-300 text-green-800';
+        return 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-300';
       default:
-        return 'bg-gray-50 border-gray-300 text-gray-800';
+        return 'bg-slate-50 border-slate-300 text-slate-800 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-300';
     }
   };
 
   return (
-    <Card className={`${className}`}>
+    <Card className={`w-full border-0 shadow-md ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between py-4">
-        <CardTitle className="text-lg font-semibold flex items-center">
-          <Bell className="mr-2 h-5 w-5 text-red-500" />
-          Warehouse Alerts
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-red-500 to-red-600/80 shadow-lg shadow-red-500/20">
+            <Bell className="h-4 w-4 text-white" />
+          </div>
+          <CardTitle className="text-lg font-semibold">
+            Warehouse Alerts
+          </CardTitle>
           {activeAlerts.length > 0 && (
-            <Badge variant="destructive" className="ml-2">
+            <Badge variant="destructive" className="rounded-lg">
               {activeAlerts.length}
             </Badge>
           )}
-        </CardTitle>
+        </div>
         {refreshing && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
       </CardHeader>
       <CardContent className="space-y-4 max-h-96 overflow-y-auto">
         {activeAlerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <CheckCircle className="h-12 w-12 text-green-500 mb-2 opacity-80" />
-            <p className="text-sm text-gray-500">
+            <div className="p-3 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 mb-3">
+              <CheckCircle className="h-8 w-8 text-emerald-500" />
+            </div>
+            <p className="text-sm text-muted-foreground">
               No active alerts. All systems operating within normal parameters.
             </p>
           </div>
@@ -171,14 +177,14 @@ export function WarehouseAlerts({
             {/* Critical Alerts */}
             {alertsByPriority.critical.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-red-800 flex items-center">
+                <h3 className="text-sm font-medium text-red-600 dark:text-red-400 flex items-center">
                   <AlertTriangle className="h-4 w-4 mr-1" />
                   Critical Alerts
                 </h3>
                 {alertsByPriority.critical.map((alert, i) => (
                   <div 
                     key={`${alert.type}-${i}-${alert.timestamp}`} 
-                    className={`p-3 rounded-md border ${getSeverityClasses(alert.severity)} text-sm`}
+                    className={`p-3 rounded-xl border ${getSeverityClasses(alert.severity)} text-sm`}
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-start">

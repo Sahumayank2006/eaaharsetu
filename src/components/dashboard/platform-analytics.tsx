@@ -54,6 +54,7 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample data for analytics
 const monthlyRevenueData = [
@@ -115,6 +116,14 @@ const topProducts = [
 export function PlatformAnalytics() {
   const [timeRange, setTimeRange] = useState("monthly");
   const [selectedMetric, setSelectedMetric] = useState("revenue");
+  const { toast } = useToast();
+
+  const handleExport = () => {
+    toast({
+      title: "Exporting Analytics",
+      description: "Generating analytics report...",
+    });
+  };
 
   // Calculate key metrics
   const currentMonth = monthlyRevenueData[monthlyRevenueData.length - 1];
@@ -130,26 +139,41 @@ export function PlatformAnalytics() {
   const totalActiveUsers = totalUsers.farmers + totalUsers.dealers + totalUsers.logistics + totalUsers.warehouses;
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Platform Analytics</h2>
+          <p className="text-muted-foreground">
+            Monitor platform performance and insights
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600/80 shadow-lg shadow-violet-500/20">
+          <BarChart3 className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
       {/* Key Performance Indicators */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
                 <p className="text-2xl font-bold">₹{totalRevenue.toLocaleString()}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                  <span className="text-sm text-green-600">+{revenueGrowth}%</span>
+                  <TrendingUp className="h-4 w-4 text-emerald-500 mr-1" />
+                  <span className="text-sm text-emerald-600">+{revenueGrowth}%</span>
                 </div>
               </div>
-              <DollarSign className="h-8 w-8 text-green-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+                <DollarSign className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -160,39 +184,45 @@ export function PlatformAnalytics() {
                   <span className="text-sm text-blue-600">+{transactionGrowth}%</span>
                 </div>
               </div>
-              <ShoppingCart className="h-8 w-8 text-blue-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-lg shadow-blue-500/20">
+                <ShoppingCart className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-950/30 dark:to-violet-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Active Users</p>
                 <p className="text-2xl font-bold">{totalActiveUsers}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingUp className="h-4 w-4 text-purple-500 mr-1" />
-                  <span className="text-sm text-purple-600">+{userGrowth}%</span>
+                  <TrendingUp className="h-4 w-4 text-violet-500 mr-1" />
+                  <span className="text-sm text-violet-600">+{userGrowth}%</span>
                 </div>
               </div>
-              <Users className="h-8 w-8 text-purple-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600/80 shadow-lg shadow-violet-500/20">
+                <Users className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Avg Order Value</p>
                 <p className="text-2xl font-bold">₹{Math.round(totalRevenue / totalTransactions).toLocaleString()}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingDown className="h-4 w-4 text-orange-500 mr-1" />
-                  <span className="text-sm text-orange-600">-2.1%</span>
+                  <TrendingDown className="h-4 w-4 text-amber-500 mr-1" />
+                  <span className="text-sm text-amber-600">-2.1%</span>
                 </div>
               </div>
-              <Target className="h-8 w-8 text-orange-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600/80 shadow-lg shadow-amber-500/20">
+                <Target className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -221,7 +251,7 @@ export function PlatformAnalytics() {
                 <SelectItem value="yearly">Yearly</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>

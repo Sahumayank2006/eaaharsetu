@@ -83,57 +83,66 @@ const orders = [
 const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
         case 'delivered':
-            return <Badge className="bg-green-600 text-white hover:bg-green-700"><CheckCircle className="mr-1 h-3 w-3"/>{status}</Badge>;
+            return <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-lg"><CheckCircle className="mr-1 h-3 w-3"/>{status}</Badge>;
         case 'processing':
-            return <Badge variant="secondary" className="bg-blue-500 text-white hover:bg-blue-600">{status}</Badge>;
+            return <Badge className="bg-blue-500 text-white hover:bg-blue-600 rounded-lg">{status}</Badge>;
         case 'shipped':
-            return <Badge variant="secondary" className="bg-yellow-500 text-white hover:bg-yellow-600"><Truck className="mr-1 h-3 w-3"/>{status}</Badge>;
+            return <Badge className="bg-amber-500 text-white hover:bg-amber-600 rounded-lg"><Truck className="mr-1 h-3 w-3"/>{status}</Badge>;
         case 'cancelled':
-            return <Badge variant="destructive"><XCircle className="mr-1 h-3 w-3"/>{status}</Badge>;
+            return <Badge className="bg-red-500 text-white hover:bg-red-600 rounded-lg"><XCircle className="mr-1 h-3 w-3"/>{status}</Badge>;
         default:
-            return <Badge variant="outline">{status}</Badge>;
+            return <Badge variant="outline" className="rounded-lg">{status}</Badge>;
     }
 }
 
 
 export function DealerOrders() {
   return (
-    <>
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-          <div>
-              <h1 className="text-2xl font-bold">Order History</h1>
-              <p className="text-muted-foreground">
-              Manage and review all your customer orders.
-              </p>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+          <div className="flex items-center gap-4">
+            <div>
+                <h2 className="text-2xl font-bold tracking-tight">Order History</h2>
+                <p className="text-muted-foreground">
+                Manage and review all your customer orders.
+                </p>
+            </div>
           </div>
-          <div className="flex gap-2 w-full md:w-auto">
-                <div className="relative flex-1 md:flex-initial">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search by Order ID..." className="pl-10" />
+          <div className="flex items-center gap-3">
+              <div className="flex gap-2 w-full md:w-auto">
+                    <div className="relative flex-1 md:flex-initial">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input placeholder="Search by Order ID..." className="pl-10 rounded-xl border-muted" />
+                  </div>
+                  <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="rounded-xl">
+                          Status <ChevronDown className="ml-2 h-4 w-4" />
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      <DropdownMenuItem>All</DropdownMenuItem>
+                      <DropdownMenuItem>Pending</DropdownMenuItem>
+                      <DropdownMenuItem>Processing</DropdownMenuItem>
+                      <DropdownMenuItem>Shipped</DropdownMenuItem>
+                      <DropdownMenuItem>Delivered</DropdownMenuItem>
+                      <DropdownMenuItem>Cancelled</DropdownMenuItem>
+                  </DropdownMenuContent>
+                  </DropdownMenu>
               </div>
-              <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                      Status <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                  <DropdownMenuItem>All</DropdownMenuItem>
-                  <DropdownMenuItem>Pending</DropdownMenuItem>
-                  <DropdownMenuItem>Processing</DropdownMenuItem>
-                  <DropdownMenuItem>Shipped</DropdownMenuItem>
-                  <DropdownMenuItem>Delivered</DropdownMenuItem>
-                  <DropdownMenuItem>Cancelled</DropdownMenuItem>
-              </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600/80 shadow-lg shadow-violet-500/20">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
           </div>
       </div>
 
-      <Card>
-        <CardContent>
+      <Card className="border-0 shadow-md">
+        <CardContent className="p-0">
+          <div className="rounded-xl border border-muted overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted/50">
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Date</TableHead>
@@ -144,18 +153,18 @@ export function DealerOrders() {
             </TableHeader>
             <TableBody>
               {orders.map((order) => (
-                <TableRow key={order.id}>
+                <TableRow key={order.id} className="hover:bg-muted/30 transition-colors">
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
                   <TableCell>{order.date}</TableCell>
-                  <TableCell>{order.total}</TableCell>
+                  <TableCell className="font-medium">{order.total}</TableCell>
                   <TableCell>
                     {getStatusBadge(order.status)}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 rounded-lg">
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -181,8 +190,9 @@ export function DealerOrders() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

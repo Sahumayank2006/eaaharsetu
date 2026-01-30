@@ -75,9 +75,14 @@ export function RequestTransportForm() {
   }
 
   return (
-    <Card>
+    <Card className="border-0 shadow-md">
         <CardHeader>
-            <CardTitle>New Transport Request</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Truck className="h-5 w-5 text-primary" />
+              </div>
+              New Transport Request
+            </CardTitle>
             <CardDescription>Fill out the details below to schedule a pickup for your crops.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,6 +99,7 @@ export function RequestTransportForm() {
                                 Select the inventory you want to move.
                                 </FormDescription>
                             </div>
+                            <div className="p-4 rounded-xl bg-muted/30 space-y-3">
                             {myCrops.map((item) => (
                                 <FormField
                                 key={item.id}
@@ -127,6 +133,7 @@ export function RequestTransportForm() {
                                 }}
                                 />
                             ))}
+                            </div>
                             <FormMessage />
                             </FormItem>
                         )}
@@ -139,7 +146,7 @@ export function RequestTransportForm() {
                             <FormItem>
                                 <FormLabel>Pickup Location</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter farm or storage address" {...field} />
+                                    <Input placeholder="Enter farm or storage address" className="rounded-xl border-muted" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -152,7 +159,7 @@ export function RequestTransportForm() {
                             <FormItem>
                                 <FormLabel>Delivery Location</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter warehouse or buyer address" {...field} />
+                                    <Input placeholder="Enter warehouse or buyer address" className="rounded-xl border-muted" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -167,7 +174,7 @@ export function RequestTransportForm() {
                                 <FormLabel>Preferred Transport Type</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
-                                        <SelectTrigger>
+                                        <SelectTrigger className="rounded-xl border-muted">
                                             <SelectValue placeholder="Select a vehicle type" />
                                         </SelectTrigger>
                                     </FormControl>
@@ -195,7 +202,7 @@ export function RequestTransportForm() {
                                     <Button
                                         variant={"outline"}
                                         className={cn(
-                                        "pl-3 text-left font-normal",
+                                        "pl-3 text-left font-normal rounded-xl border-muted",
                                         !field.value && "text-muted-foreground"
                                         )}
                                     >
@@ -228,7 +235,7 @@ export function RequestTransportForm() {
                             <FormItem>
                                 <FormLabel>Pickup Time Window</FormLabel>
                                 <FormControl>
-                                    <Input type="time" {...field} />
+                                    <Input type="time" className="rounded-xl border-muted" {...field} />
                                 </FormControl>
                                 <FormDescription>Optional: Specify a time.</FormDescription>
                                 <FormMessage />
@@ -237,7 +244,7 @@ export function RequestTransportForm() {
                         />
                     </div>
                 
-                    <Button type="submit" size="lg">
+                    <Button type="submit" size="lg" className="rounded-xl shadow-md shadow-primary/20">
                         <Truck className="mr-2 h-4 w-4" /> Submit Transport Request
                     </Button>
                 </form>

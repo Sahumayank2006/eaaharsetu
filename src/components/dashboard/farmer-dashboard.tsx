@@ -11,6 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   User,
+  MapPin,
+  Warehouse,
+  CalendarPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { FarmLocationMap } from "./farm-location-map";
@@ -23,14 +26,23 @@ export default function FarmerDashboard() {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="w-full space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold tracking-tight">{t('welcome_farmer', 'Welcome, Farmer')}</h1>
+        <p className="text-muted-foreground">
+          {t('farmer_dashboard_desc', 'Manage your farm location and book warehouse slots')}
+        </p>
+      </div>
+
+      {/* Farm Location Map */}
       <FarmLocationMap />
       
-      <div className="grid lg:grid-cols-2 gap-8">
+      {/* Bottom Grid */}
+      <div className="grid lg:grid-cols-2 gap-6">
         <NearestWarehouses />
         <SlotBooking />
       </div>
-      
     </div>
   );
 }

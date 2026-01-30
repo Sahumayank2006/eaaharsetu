@@ -50,23 +50,28 @@ export function YourInventory() {
     const cropsAtRisk = inventoryData.filter(item => item.spoilsIn <= 7);
 
   return (
-    <Card>
+    <Card className="w-full border-0 shadow-md">
       <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-            <CardTitle>Inventory List</CardTitle>
-            <CardDescription>
-                A total of {inventoryData.length} items in your inventory.
-            </CardDescription>
+        <div className="flex items-center gap-4">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+              <Package className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle>Your Inventory</CardTitle>
+              <CardDescription>
+                  A total of {inventoryData.length} items in your inventory
+              </CardDescription>
+            </div>
         </div>
         {cropsAtRisk.length > 0 && (
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <Button variant="destructive">
+                    <Button variant="destructive" className="rounded-xl shadow-md">
                         <AlertTriangle className="mr-2 h-4 w-4" />
                         {cropsAtRisk.length} Item(s) at Risk
                     </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="rounded-xl">
                     <AlertDialogHeader>
                     <AlertDialogTitle>Spoilage Alert!</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -81,16 +86,17 @@ export function YourInventory() {
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                    <AlertDialogAction>Got it</AlertDialogAction>
+                    <AlertDialogAction className="rounded-lg">Got it</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
         )}
       </CardHeader>
       <CardContent>
+        <div className="rounded-xl border border-muted overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/50">
               <TableHead><Package className="h-4 w-4 inline-block mr-2" />Crop Name</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead><Warehouse className="h-4 w-4 inline-block mr-2" />Storage Location</TableHead>
@@ -100,13 +106,13 @@ export function YourInventory() {
           </TableHeader>
           <TableBody>
             {inventoryData.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow key={item.id} className="hover:bg-muted/30 transition-colors">
                 <TableCell className="font-medium">{item.name}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.storage}</TableCell>
                 <TableCell>{item.harvestDate}</TableCell>
                 <TableCell className="text-right">
-                    <Badge variant={item.spoilsIn <= 7 ? "destructive" : item.spoilsIn <=30 ? "secondary" : "outline"} className="text-sm">
+                    <Badge variant={item.spoilsIn <= 7 ? "destructive" : item.spoilsIn <=30 ? "secondary" : "outline"} className="text-sm rounded-lg">
                         {item.spoilsIn} days
                     </Badge>
                 </TableCell>
@@ -114,6 +120,7 @@ export function YourInventory() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </CardContent>
     </Card>
   );

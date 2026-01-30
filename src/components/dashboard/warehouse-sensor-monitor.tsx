@@ -119,14 +119,14 @@ export function WarehouseSensorMonitor() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {/* Error Alert */}
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="rounded-xl">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription className="text-sm">
             Failed to load sensor data: {error}
-            <Button variant="outline" size="sm" onClick={refetch} className="ml-2 mt-2 sm:mt-0">
+            <Button variant="outline" size="sm" onClick={refetch} className="ml-2 mt-2 sm:mt-0 rounded-lg">
               <RefreshCw className="h-3 w-3 mr-1" />
               Retry
             </Button>
@@ -136,9 +136,14 @@ export function WarehouseSensorMonitor() {
 
       {/* Warehouse Selection */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-        <div>
-          <h2 className="text-lg font-semibold">Warehouse Sensor Monitoring</h2>
-          <p className="text-sm text-muted-foreground">Real-time IoT sensor data from selected warehouse</p>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+            <Package className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Warehouse Sensor Monitoring</h2>
+            <p className="text-sm text-muted-foreground">Real-time IoT sensor data from selected warehouse</p>
+          </div>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <div className="flex items-center gap-2">
@@ -150,10 +155,10 @@ export function WarehouseSensorMonitor() {
                 refetch();
               }}
             >
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[120px] rounded-xl border-muted">
                 <SelectValue placeholder="Select Warehouse" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 {availableWarehouses.map((id) => (
                   <SelectItem key={id} value={id}>
                     {id}
@@ -162,7 +167,7 @@ export function WarehouseSensorMonitor() {
               </SelectContent>
             </Select>
           </div>
-          <Button variant="outline" size="sm" onClick={refetch} disabled={isLoading}>
+          <Button variant="outline" size="sm" onClick={refetch} disabled={isLoading} className="rounded-lg">
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -171,28 +176,30 @@ export function WarehouseSensorMonitor() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-700">
+            <CardTitle className="text-sm font-medium">
               Total Readings
             </CardTitle>
-            <Package className="h-5 w-5 text-blue-600" />
+            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+              <Package className="h-4 w-4 text-blue-600" />
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <Skeleton className="h-8 w-20 mb-2" />
             ) : (
-              <div className="text-2xl font-bold text-gray-900">{stats?.totalReadings || 0}</div>
+              <div className="text-2xl font-bold">{stats?.totalReadings || 0}</div>
             )}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               From warehouse {warehouseId}
             </p>
           </CardContent>
         </Card>
         
-        <Card className={`hover:shadow-md transition-all duration-300 ${stats ? getTemperatureStatus(stats.avgTemperature).borderClass : 'border-2 border-gray-200'} ${stats ? getTemperatureStatus(stats.avgTemperature).rimClass : ''}`}>
+        <Card className={`shadow-md hover:shadow-lg transition-all duration-300 ${stats ? getTemperatureStatus(stats.avgTemperature).borderClass : 'border-2 border-muted'} ${stats ? getTemperatureStatus(stats.avgTemperature).rimClass : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-700">Avg. Temperature</CardTitle>
+            <CardTitle className="text-sm font-medium">Avg. Temperature</CardTitle>
             <Thermometer className={`h-5 w-5 ${stats ? getTemperatureStatus(stats.avgTemperature).color : 'text-muted-foreground'}`} />
           </CardHeader>
           <CardContent>

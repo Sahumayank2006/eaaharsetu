@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 const loanApplications = [
   {
@@ -72,29 +73,32 @@ const transactions = [
 
 function LoanManagement() {
   return (
-    <Card>
+    <Card className="border-0 shadow-md">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>Loan Management</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Banknote className="h-5 w-5 text-primary" />
+            Loan Management
+          </CardTitle>
           <CardDescription>
-            Apply for new loans and track your existing applications.
+            Apply for new loans and track your existing applications
           </CardDescription>
         </div>
-        <Button>
+        <Button className="rounded-xl shadow-md shadow-primary/20">
           <PlusCircle className="mr-2 h-4 w-4" />
           Apply for Loan
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         {loanApplications.map((loan) => (
-          <Card key={loan.id}>
+          <Card key={loan.id} className="border-0 shadow-sm hover:shadow-md transition-all duration-300">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="text-lg">{loan.type}</CardTitle>
                   <CardDescription>ID: {loan.id} | Applied on: {loan.date}</CardDescription>
                 </div>
-                <Badge variant={loan.status === 'Approved' ? 'default' : 'secondary'} className={loan.status === 'Approved' ? 'bg-green-600 text-white' : ''}>
+                <Badge variant={loan.status === 'Approved' ? 'default' : 'secondary'} className={`rounded-lg ${loan.status === 'Approved' ? 'bg-emerald-600 text-white' : ''}`}>
                     {loan.status}
                 </Badge>
               </div>
@@ -110,7 +114,7 @@ function LoanManagement() {
                 </div>
             </CardContent>
             <CardFooter>
-                 <Button variant="outline" size="sm">
+                 <Button variant="outline" size="sm" className="rounded-lg">
                     <FileText className="mr-2 h-4 w-4" /> View Details
                  </Button>
             </CardFooter>
@@ -122,22 +126,49 @@ function LoanManagement() {
 }
 
 function InsuranceManagement() {
+    const { toast } = useToast();
+    
+    const handleFileClaim = (id: string, type: string) => {
+        toast({
+            title: "Claim Form Initiated",
+            description: `Starting claim process for ${type}. Policy ID: ${id}`,
+        });
+    };
+    
+    const handleViewDetails = (id: string, type: string, status: string) => {
+        toast({
+            title: `Policy: ${type}`,
+            description: `Status: ${status}, ID: ${id}. Full details page coming soon!`,
+        });
+    };
+    
+    const handleNewPolicy = () => {
+        toast({
+            title: "New Policy",
+            description: "Opening insurance enrollment form...",
+        });
+    };
+
     return (
-        <Card>
+        <Card className="border-0 shadow-md">
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle>Crop Insurance</CardTitle>
-                    <CardDescription>Manage your insurance policies and file claims.</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                        <Shield className="h-5 w-5 text-primary" />
+                        Crop Insurance
+                    </CardTitle>
+                    <CardDescription>Manage your insurance policies and file claims</CardDescription>
                 </div>
-                <Button>
+                <Button className="rounded-xl shadow-md shadow-primary/20" onClick={handleNewPolicy}>
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     New Policy
                 </Button>
             </CardHeader>
             <CardContent>
+                <div className="rounded-xl border border-muted overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="bg-muted/50">
                             <TableHead>Policy</TableHead>
                             <TableHead>Premium</TableHead>
                             <TableHead>Coverage</TableHead>
@@ -147,18 +178,18 @@ function InsuranceManagement() {
                     </TableHeader>
                     <TableBody>
                         {insurancePolicies.map((policy) => (
-                            <TableRow key={policy.id}>
+                            <TableRow key={policy.id} className="hover:bg-muted/30 transition-colors">
                                 <TableCell className="font-medium">{policy.type}</TableCell>
                                 <TableCell>{policy.premium}</TableCell>
                                 <TableCell>{policy.coverage}</TableCell>
                                 <TableCell>
-                                    <Badge variant={policy.status === 'Active' ? 'default' : 'destructive'} className={policy.status === 'Active' ? 'bg-blue-600 text-white' : ''}>
+                                    <Badge variant={policy.status === 'Active' ? 'default' : 'destructive'} className={`rounded-lg ${policy.status === 'Active' ? 'bg-blue-600 text-white' : ''}`}>
                                         {policy.status}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right space-x-2">
-                                     <Button variant="outline" size="sm">File Claim</Button>
-                                     <Button variant="ghost" size="sm">Details</Button>
+                                     <Button variant="outline" size="sm" className="rounded-lg" onClick={() => handleFileClaim(policy.id, policy.type)}>File Claim</Button>
+                                     <Button variant="ghost" size="sm" onClick={() => handleViewDetails(policy.id, policy.type, policy.status)}>Details</Button>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -252,37 +283,52 @@ function PaymentDashboard() {
 
 export function FinancialServicesTabs() {
   return (
-    <Tabs defaultValue="loans" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-        <TabsTrigger value="loans">
-          <Banknote className="mr-2 h-4 w-4" />
-          Loans
-        </TabsTrigger>
-        <TabsTrigger value="insurance">
-          <Shield className="mr-2 h-4 w-4" />
-          Insurance
-        </TabsTrigger>
-        <TabsTrigger value="subsidies">
-          <HandHelping className="mr-2 h-4 w-4" />
-          Subsidies
-        </TabsTrigger>
-         <TabsTrigger value="transactions">
-          <Receipt className="mr-2 h-4 w-4" />
-          Transactions
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="loans">
-        <LoanManagement />
-      </TabsContent>
-      <TabsContent value="insurance">
-        <InsuranceManagement />
-      </TabsContent>
-      <TabsContent value="subsidies">
-        <SubsidyTracking />
-      </TabsContent>
-       <TabsContent value="transactions">
-        <PaymentDashboard />
-      </TabsContent>
-    </Tabs>
+    <div className="w-full space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Financial Services</h2>
+          <p className="text-muted-foreground">
+            Manage loans, insurance, subsidies and transactions
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+          <Banknote className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
+      <Tabs defaultValue="loans" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-muted/50 p-1 rounded-xl">
+          <TabsTrigger value="loans" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Banknote className="mr-2 h-4 w-4" />
+            Loans
+          </TabsTrigger>
+          <TabsTrigger value="insurance" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Shield className="mr-2 h-4 w-4" />
+            Insurance
+          </TabsTrigger>
+          <TabsTrigger value="subsidies" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <HandHelping className="mr-2 h-4 w-4" />
+            Subsidies
+          </TabsTrigger>
+          <TabsTrigger value="transactions" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Receipt className="mr-2 h-4 w-4" />
+            Transactions
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="loans">
+          <LoanManagement />
+        </TabsContent>
+        <TabsContent value="insurance">
+          <InsuranceManagement />
+        </TabsContent>
+        <TabsContent value="subsidies">
+          <SubsidyTracking />
+        </TabsContent>
+        <TabsContent value="transactions">
+          <PaymentDashboard />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

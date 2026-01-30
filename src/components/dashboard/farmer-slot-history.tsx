@@ -4,9 +4,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
@@ -17,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, Loader2, Warehouse, XCircle } from "lucide-react";
+import { CheckCircle, Clock, History, Loader2, Warehouse, XCircle } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { db } from "@/lib/firebase/firebase";
 import { collection, onSnapshot, query, Timestamp, where, orderBy } from "firebase/firestore";
@@ -38,13 +35,13 @@ interface Slot {
 const getStatusBadge = (status: string, t: (key: string, defaultText: string) => string) => {
     switch (status.toLowerCase()) {
         case 'completed':
-            return <Badge className="bg-green-600 text-white hover:bg-green-700"><CheckCircle className="mr-1 h-3 w-3"/>{t('completed', status)}</Badge>;
+            return <Badge className="bg-green-600 text-white hover:bg-green-700 rounded-lg"><CheckCircle className="mr-1 h-3 w-3"/>{t('completed', status)}</Badge>;
         case 'upcoming':
-            return <Badge className="bg-blue-500 text-white hover:bg-blue-600"><Clock className="mr-1 h-3 w-3"/>{t('upcoming', status)}</Badge>;
+            return <Badge className="bg-blue-500 text-white hover:bg-blue-600 rounded-lg"><Clock className="mr-1 h-3 w-3"/>{t('upcoming', status)}</Badge>;
         case 'cancelled':
-            return <Badge variant="destructive"><XCircle className="mr-1 h-3 w-3"/>{t('cancelled', status)}</Badge>;
+            return <Badge variant="destructive" className="rounded-lg"><XCircle className="mr-1 h-3 w-3"/>{t('cancelled', status)}</Badge>;
         default:
-            return <Badge variant="outline">{t(status.toLowerCase(), status)}</Badge>;
+            return <Badge variant="outline" className="rounded-lg">{t(status.toLowerCase(), status)}</Badge>;
     }
 }
 
@@ -85,12 +82,20 @@ export function FarmerSlotHistory() {
     }, []);
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('your_bookings', "Your Bookings")}</CardTitle>
-                <CardDescription>{t('your_bookings_desc', "A list of all your warehouse bookings.")}</CardDescription>
-            </CardHeader>
-            <CardContent>
+        <div className="space-y-6">
+            {/* Page Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-2xl font-bold tracking-tight">{t('your_bookings', "Your Bookings")}</h2>
+                    <p className="text-muted-foreground">{t('your_bookings_desc', "A list of all your warehouse bookings.")}</p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-lg shadow-blue-500/20">
+                    <History className="h-5 w-5 text-white" />
+                </div>
+            </div>
+
+            <Card className="border-0 shadow-md">
+                <CardContent className="pt-6">
                 {loading ? (
                     <div className="flex justify-center items-center h-48">
                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -101,30 +106,33 @@ export function FarmerSlotHistory() {
                         <p className="text-sm">{t('no_bookings_desc', "You haven't booked any warehouse slots yet.")}</p>
                     </div>
                 ) : (
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead><Warehouse className="h-4 w-4 inline-block mr-2"/>{t('warehouse', "Warehouse")}</TableHead>
-                                <TableHead>{t('crop_type', "Crop Type")}</TableHead>
-                                <TableHead>{t('quantity', "Quantity")}</TableHead>
-                                <TableHead>{t('booking_date', "Booking Date")}</TableHead>
-                                <TableHead>{t('status', "Status")}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {bookedSlots.map((slot) => (
-                                <TableRow key={slot.id}>
-                                    <TableCell className="font-medium">{slot.warehouse}</TableCell>
-                                    <TableCell>{slot.cropType}</TableCell>
-                                    <TableCell>{slot.quantity} {slot.unit}</TableCell>
-                                    <TableCell>{format(slot.bookingDate.toDate(), "PPP")}</TableCell>
-                                    <TableCell>{getStatusBadge(slot.status, t)}</TableCell>
+                    <div className="rounded-xl border border-muted overflow-hidden">
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                                    <TableHead><Warehouse className="h-4 w-4 inline-block mr-2"/>{t('warehouse', "Warehouse")}</TableHead>
+                                    <TableHead>{t('crop_type', "Crop Type")}</TableHead>
+                                    <TableHead>{t('quantity', "Quantity")}</TableHead>
+                                    <TableHead>{t('booking_date', "Booking Date")}</TableHead>
+                                    <TableHead>{t('status', "Status")}</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {bookedSlots.map((slot) => (
+                                    <TableRow key={slot.id} className="hover:bg-muted/30 transition-colors">
+                                        <TableCell className="font-medium">{slot.warehouse}</TableCell>
+                                        <TableCell>{slot.cropType}</TableCell>
+                                        <TableCell>{slot.quantity} {slot.unit}</TableCell>
+                                        <TableCell>{format(slot.bookingDate.toDate(), "PPP")}</TableCell>
+                                        <TableCell>{getStatusBadge(slot.status, t)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 )}
             </CardContent>
         </Card>
+        </div>
     );
 }

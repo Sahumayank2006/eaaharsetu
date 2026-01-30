@@ -68,74 +68,85 @@ export function MealPlanner() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Surplus Crop Meal Planner</CardTitle>
-        <CardDescription>
-          Turn your surplus into delicious meals. List your excess crops and let our AI chef suggest recipes.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid md:grid-cols-2 gap-8">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="surplusCrops"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Your Surplus Crops</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="e.g., Carrots - 10kg&#10;Zucchini - 5kg"
-                      className="min-h-[150px]"
-                      {...field}
-                    />
-                  </FormControl>
-                   <FormMessage />
-                   <p className="text-xs text-muted-foreground">List each crop on a new line with its quantity.</p>
-                </FormItem>
-              )}
-            />
-            
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="mr-2 h-4 w-4" />
-              )}
-              Generate Meal Plans
-            </Button>
-          </form>
-        </Form>
-        <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Suggested Meal Plans</h3>
-            {isLoading && (
-                <div className="flex items-center justify-center h-48 border-2 border-dashed rounded-lg">
-                    <p className="text-muted-foreground">Our AI chef is thinking...</p>
-                </div>
-            )}
-            {mealPlans && mealPlans.mealPlans.length > 0 && (
-                <Card className="bg-muted/50 max-h-[400px] overflow-y-auto">
-                <CardContent className="p-6 space-y-4">
-                    {mealPlans.mealPlans.map((plan, index) => (
-                    <div key={index} className="p-4 border rounded-lg bg-background">
-                        <h4 className="font-semibold flex items-center gap-2">
-                            <ChefHat className="h-5 w-5 text-primary" />
-                            Idea #{index + 1}
-                        </h4>
-                        <p className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">{plan}</p>
-                    </div>
-                    ))}
-                </CardContent>
-                </Card>
-            )}
-            {!isLoading && !mealPlans && (
-                <div className="flex items-center justify-center h-48 border-2 border-dashed rounded-lg">
-                    <p className="text-muted-foreground">Meal ideas will appear here.</p>
-                </div>
-            )}
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Surplus Crop Meal Planner</h2>
+          <p className="text-muted-foreground">
+            Turn your surplus into delicious meals. List your excess crops and let our AI chef suggest recipes.
+          </p>
         </div>
-      </CardContent>
-    </Card>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600/80 shadow-lg shadow-orange-500/20">
+          <ChefHat className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
+      <Card className="border-0 shadow-md">
+        <CardContent className="grid md:grid-cols-2 gap-8 pt-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="surplusCrops"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Your Surplus Crops</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g., Carrots - 10kg&#10;Zucchini - 5kg"
+                        className="min-h-[150px] rounded-xl border-muted"
+                        {...field}
+                      />
+                    </FormControl>
+                     <FormMessage />
+                     <p className="text-xs text-muted-foreground">List each crop on a new line with its quantity.</p>
+                  </FormItem>
+                )}
+              />
+              
+              <Button type="submit" disabled={isLoading} className="rounded-xl shadow-md shadow-primary/20">
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                Generate Meal Plans
+              </Button>
+            </form>
+          </Form>
+          <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Suggested Meal Plans</h3>
+              {isLoading && (
+                  <div className="flex items-center justify-center h-48 border-2 border-dashed rounded-xl bg-muted/30">
+                      <p className="text-muted-foreground">Our AI chef is thinking...</p>
+                  </div>
+              )}
+              {mealPlans && mealPlans.mealPlans.length > 0 && (
+                  <Card className="bg-muted/30 max-h-[400px] overflow-y-auto border-0">
+                  <CardContent className="p-6 space-y-4">
+                      {mealPlans.mealPlans.map((plan, index) => (
+                      <div key={index} className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20">
+                          <h4 className="font-semibold flex items-center gap-2">
+                              <div className="p-1.5 rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                                <ChefHat className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                              </div>
+                              Idea #{index + 1}
+                          </h4>
+                          <p className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">{plan}</p>
+                      </div>
+                      ))}
+                  </CardContent>
+                  </Card>
+              )}
+              {!isLoading && !mealPlans && (
+                  <div className="flex items-center justify-center h-48 border-2 border-dashed rounded-xl bg-muted/30">
+                      <p className="text-muted-foreground">Meal ideas will appear here.</p>
+                  </div>
+              )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

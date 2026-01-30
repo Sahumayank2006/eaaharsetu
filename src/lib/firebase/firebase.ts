@@ -3,13 +3,15 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 
+// Firebase config loaded from environment variables
+// All values are public (NEXT_PUBLIC_) and safe to expose in browser bundles
 const firebaseConfig = {
-  apiKey: "AIzaSyAuosxuKfvVrWdqeMtFAetxejVBBeeXHFs",
-  authDomain: "agrimarket-7quyf.firebaseapp.com",
-  projectId: "agrimarket-7quyf",
-  storageBucket: "agrimarket-7quyf.appspot.com",
-  messagingSenderId: "1079117222665",
-  appId: "1:1079117222665:web:7466113853f2212c0e39d8",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
 };
 
 // Initialize Firebase

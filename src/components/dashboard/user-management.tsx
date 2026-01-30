@@ -208,13 +208,13 @@ const sampleDealers: Dealer[] = [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "active": return "bg-green-100 text-green-800";
-    case "approved": return "bg-green-100 text-green-800";
-    case "inactive": return "bg-gray-100 text-gray-800";
-    case "suspended": return "bg-red-100 text-red-800";
-    case "pending": return "bg-yellow-100 text-yellow-800";
-    case "rejected": return "bg-red-100 text-red-800";
-    default: return "bg-gray-100 text-gray-800";
+    case "active": return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+    case "approved": return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+    case "inactive": return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
+    case "suspended": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    case "pending": return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    case "rejected": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    default: return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
   }
 };
 
@@ -288,29 +288,32 @@ export function UserManagement() {
   const approvedDealers = dealers.filter(d => d.status === 'approved').length;
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">User Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
           <p className="text-muted-foreground">
             Manage dealers, warehouse managers, and transport partners
           </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-lg shadow-blue-500/20">
+          <Users className="h-5 w-5 text-white" />
         </div>
       </div>
 
       {/* Tabbed Interface */}
       <Tabs defaultValue="dealers" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="dealers" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-xl">
+          <TabsTrigger value="dealers" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Store className="h-4 w-4" />
             Dealers ({dealers.length})
           </TabsTrigger>
-          <TabsTrigger value="warehouse" className="flex items-center gap-2">
+          <TabsTrigger value="warehouse" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Warehouse className="h-4 w-4" />
             Warehouse Managers ({warehouseManagers.length})
           </TabsTrigger>
-          <TabsTrigger value="transport" className="flex items-center gap-2">
+          <TabsTrigger value="transport" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Truck className="h-4 w-4" />
             Transport Partners ({transportPartners.length})
           </TabsTrigger>
@@ -325,16 +328,16 @@ export function UserManagement() {
                 placeholder="Search users..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 rounded-xl border-muted"
               />
             </div>
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 rounded-xl border-muted">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl">
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
@@ -349,57 +352,65 @@ export function UserManagement() {
         <TabsContent value="dealers" className="space-y-6">
           {/* Dealer Statistics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
+            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Total Dealers</p>
                     <p className="text-2xl font-bold">{dealers.length}</p>
                   </div>
-                  <Store className="h-8 w-8 text-blue-500" />
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-lg shadow-blue-500/20">
+                    <Store className="h-5 w-5 text-white" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Approved</p>
-                    <p className="text-2xl font-bold text-green-600">{approvedDealers}</p>
+                    <p className="text-2xl font-bold text-emerald-600">{approvedDealers}</p>
                   </div>
-                  <UserCheck className="h-8 w-8 text-green-500" />
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+                    <UserCheck className="h-5 w-5 text-white" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Pending</p>
-                    <p className="text-2xl font-bold text-yellow-600">{pendingDealers}</p>
+                    <p className="text-2xl font-bold text-amber-600">{pendingDealers}</p>
                   </div>
-                  <Clock className="h-8 w-8 text-yellow-500" />
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600/80 shadow-lg shadow-amber-500/20">
+                    <Clock className="h-5 w-5 text-white" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Rejected</p>
                     <p className="text-2xl font-bold text-red-600">{dealers.filter(d => d.status === 'rejected').length}</p>
                   </div>
-                  <UserX className="h-8 w-8 text-red-500" />
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-red-500 to-red-600/80 shadow-lg shadow-red-500/20">
+                    <UserX className="h-5 w-5 text-white" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
           {/* Dealers Table */}
-          <Card>
+          <Card className="border-0 shadow-md">
             <CardHeader>
               <CardTitle>Dealer Applications & Management</CardTitle>
               <CardDescription>Review and manage dealer registrations</CardDescription>
@@ -456,7 +467,7 @@ export function UserManagement() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="text-green-600 border-green-600 hover:bg-green-50"
+                                className="text-emerald-600 border-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg"
                                 onClick={() => handleUpdateDealerStatus(dealer.id, "approved")}
                                 disabled={updatingId === dealer.id}
                               >
@@ -465,6 +476,7 @@ export function UserManagement() {
                               <Button
                                 size="sm"
                                 variant="destructive"
+                                className="rounded-lg"
                                 onClick={() => handleUpdateDealerStatus(dealer.id, "rejected")}
                                 disabled={updatingId === dealer.id}
                               >
@@ -502,9 +514,12 @@ export function UserManagement() {
 
         {/* Warehouse Managers Tab */}
         <TabsContent value="warehouse" className="space-y-6">
-          <Card>
+          <Card className="border-0 shadow-md">
             <CardHeader>
-              <CardTitle>Warehouse Managers</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Warehouse className="h-5 w-5 text-primary" />
+                Warehouse Managers
+              </CardTitle>
               <CardDescription>Manage warehouse manager accounts</CardDescription>
             </CardHeader>
             <CardContent>
@@ -588,9 +603,12 @@ export function UserManagement() {
 
         {/* Transport Partners Tab */}
         <TabsContent value="transport" className="space-y-6">
-          <Card>
+          <Card className="border-0 shadow-md">
             <CardHeader>
-              <CardTitle>Transport Partners</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Truck className="h-5 w-5 text-primary" />
+                Transport Partners
+              </CardTitle>
               <CardDescription>Manage logistics and transport partner accounts</CardDescription>
             </CardHeader>
             <CardContent>

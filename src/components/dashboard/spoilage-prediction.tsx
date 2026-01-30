@@ -77,12 +77,19 @@ export function SpoilagePrediction() {
   }
 
   return (
-    <Card>
+    <Card className="w-full border-0 shadow-md">
       <CardHeader>
-        <CardTitle>AI Spoilage Prediction</CardTitle>
-        <CardDescription>
-          Enter sensor and historical data to predict crop spoilage risk.
-        </CardDescription>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600/80 shadow-lg shadow-violet-500/20">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <CardTitle>AI Spoilage Prediction</CardTitle>
+            <CardDescription>
+              Enter sensor and historical data to predict crop spoilage risk
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="grid md:grid-cols-2 gap-8">
         <Form {...form}>
@@ -94,7 +101,7 @@ export function SpoilagePrediction() {
                 <FormItem>
                   <FormLabel>Crop Type</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Wheat" {...field} />
+                    <Input placeholder="e.g., Wheat" {...field} className="rounded-xl border-muted" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

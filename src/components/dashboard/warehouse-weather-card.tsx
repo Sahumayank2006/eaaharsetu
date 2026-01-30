@@ -1,6 +1,6 @@
 "use client";
 
-import { Droplets, Thermometer, AlertTriangle } from "lucide-react";
+import { Droplets, Thermometer, AlertTriangle, CloudRain, Cloud, Sun, Snowflake, CloudFog, CloudSun } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -21,17 +21,17 @@ export function WarehouseWeatherCard({ warehouseId, className = "" }: WarehouseW
     const lowerCondition = condition?.toLowerCase() || '';
     
     if (lowerCondition.includes('rain') || lowerCondition.includes('storm')) {
-      return '🌧️';
+      return <CloudRain className="h-6 w-6 text-blue-500" />;
     } else if (lowerCondition.includes('cloud')) {
-      return '☁️';
+      return <Cloud className="h-6 w-6 text-gray-500" />;
     } else if (lowerCondition.includes('sun') || lowerCondition.includes('clear')) {
-      return '☀️';
+      return <Sun className="h-6 w-6 text-yellow-500" />;
     } else if (lowerCondition.includes('snow')) {
-      return '❄️';
+      return <Snowflake className="h-6 w-6 text-blue-300" />;
     } else if (lowerCondition.includes('fog') || lowerCondition.includes('mist')) {
-      return '🌫️';
+      return <CloudFog className="h-6 w-6 text-gray-400" />;
     }
-    return '🌤️'; // Default
+    return <CloudSun className="h-6 w-6 text-yellow-400" />; // Default
   };
   
   // Temperature color
@@ -70,14 +70,19 @@ export function WarehouseWeatherCard({ warehouseId, className = "" }: WarehouseW
   const weatherTrend = weatherData ? getWeatherTrend(weatherData) : null;
   
   return (
-    <Card className={className}>
+    <Card className={`border-0 shadow-md ${className}`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between">
           <div>
-            <CardTitle className="text-lg">Local Weather</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <Cloud className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              Local Weather
+            </CardTitle>
+            <CardDescription className="mt-2">
               {isLoading ? (
-                <Skeleton className="h-4 w-32 mt-1" />
+                <Skeleton className="h-4 w-32 mt-1 rounded-lg" />
               ) : error ? (
                 <span className="text-red-500">Error loading weather</span>
               ) : (
@@ -97,22 +102,24 @@ export function WarehouseWeatherCard({ warehouseId, className = "" }: WarehouseW
       <CardContent>
         {isLoading ? (
           <div className="space-y-4">
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-12 w-full rounded-xl" />
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center p-4 text-red-500">
+          <div className="flex items-center justify-center p-4 text-red-500 rounded-xl bg-red-50 dark:bg-red-950/30">
             <AlertTriangle className="h-5 w-5 mr-2" />
             Unable to load weather data
           </div>
         ) : (
           weatherData && (
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center p-4 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100/50 dark:from-sky-950/30 dark:to-sky-900/20">
                 <div className="flex items-center">
-                  <Thermometer className={`h-8 w-8 ${getTempColor(weatherData.temperature)}`} />
-                  <div className="ml-2">
-                    <p className="text-sm text-muted-foreground">Temperature</p>
+                  <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
+                    <Thermometer className={`h-6 w-6 ${getTempColor(weatherData.temperature)}`} />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-xs text-muted-foreground">Temperature</p>
                     <p className={`text-2xl font-bold ${getTempColor(weatherData.temperature)}`}>
                       {weatherData.temperature.toFixed(1)}°C
                     </p>
@@ -120,9 +127,11 @@ export function WarehouseWeatherCard({ warehouseId, className = "" }: WarehouseW
                 </div>
                 
                 <div className="flex items-center">
-                  <Droplets className={`h-8 w-8 ${getHumidityColor(weatherData.humidity)}`} />
-                  <div className="ml-2">
-                    <p className="text-sm text-muted-foreground">Humidity</p>
+                  <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                    <Droplets className={`h-6 w-6 ${getHumidityColor(weatherData.humidity)}`} />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-xs text-muted-foreground">Humidity</p>
                     <p className={`text-2xl font-bold ${getHumidityColor(weatherData.humidity)}`}>
                       {weatherData.humidity.toFixed(0)}%
                     </p>
@@ -131,8 +140,8 @@ export function WarehouseWeatherCard({ warehouseId, className = "" }: WarehouseW
               </div>
               
               <div>
-                <p className="text-sm font-medium mb-1">Condition</p>
-                <Badge variant="secondary" className="text-sm">
+                <p className="text-sm font-medium mb-2">Condition</p>
+                <Badge variant="secondary" className="text-sm rounded-lg">
                   {weatherData.condition}
                 </Badge>
                 
@@ -151,7 +160,7 @@ export function WarehouseWeatherCard({ warehouseId, className = "" }: WarehouseW
                   <p className="text-sm font-medium">3-Day Forecast</p>
                   <div className="grid grid-cols-3 gap-2">
                     {weatherData.forecast.slice(0, 3).map((day, index) => (
-                      <div key={index} className="text-center p-1 rounded-md bg-secondary/20">
+                      <div key={index} className="text-center p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors">
                         <p className="text-xs text-muted-foreground">
                           {new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })}
                         </p>

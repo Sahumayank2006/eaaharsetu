@@ -237,32 +237,32 @@ const sampleTransactions: Transaction[] = [
 
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
-    case "purchase": return "bg-blue-100 text-blue-800";
-    case "sale": return "bg-green-100 text-green-800";
-    case "refund": return "bg-red-100 text-red-800";
-    case "commission": return "bg-purple-100 text-purple-800";
-    case "withdrawal": return "bg-orange-100 text-orange-800";
-    default: return "bg-gray-100 text-gray-800";
+    case "purchase": return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+    case "sale": return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+    case "refund": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    case "commission": return "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400";
+    case "withdrawal": return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    default: return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
   }
 };
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "completed": return "bg-green-100 text-green-800";
-    case "pending": return "bg-yellow-100 text-yellow-800";
-    case "failed": return "bg-red-100 text-red-800";
-    case "cancelled": return "bg-gray-100 text-gray-800";
-    default: return "bg-gray-100 text-gray-800";
+    case "completed": return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+    case "pending": return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    case "failed": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    case "cancelled": return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
+    default: return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
   }
 };
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case "completed": return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case "pending": return <Clock className="h-4 w-4 text-yellow-500" />;
+    case "completed": return <CheckCircle className="h-4 w-4 text-emerald-500" />;
+    case "pending": return <Clock className="h-4 w-4 text-amber-500" />;
     case "failed": return <XCircle className="h-4 w-4 text-red-500" />;
-    case "cancelled": return <AlertCircle className="h-4 w-4 text-gray-500" />;
-    default: return <Clock className="h-4 w-4 text-gray-500" />;
+    case "cancelled": return <AlertCircle className="h-4 w-4 text-slate-500" />;
+    default: return <Clock className="h-4 w-4 text-slate-500" />;
   }
 };
 
@@ -316,53 +316,74 @@ export function TransactionManagement() {
   const successRate = totalTransactions > 0 ? (completedTransactions / totalTransactions) * 100 : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Transactions</h2>
+          <p className="text-muted-foreground">
+            Monitor and manage all platform transactions
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600/80 shadow-lg shadow-violet-500/20">
+          <CreditCard className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
       {/* Transaction Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Transactions</p>
                 <p className="text-2xl font-bold">{totalTransactions}</p>
               </div>
-              <CreditCard className="h-8 w-8 text-blue-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-lg shadow-blue-500/20">
+                <CreditCard className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                <p className="text-2xl font-bold">₹{totalRevenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-emerald-600">₹{totalRevenue.toLocaleString()}</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-950/30 dark:to-violet-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Platform Fees</p>
-                <p className="text-2xl font-bold">₹{totalFees.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-violet-600">₹{totalFees.toLocaleString()}</p>
               </div>
-              <Wallet className="h-8 w-8 text-purple-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600/80 shadow-lg shadow-violet-500/20">
+                <Wallet className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-teal-50 to-teal-100/50 dark:from-teal-950/30 dark:to-teal-900/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Success Rate</p>
-                <p className="text-2xl font-bold">{successRate.toFixed(1)}%</p>
+                <p className="text-2xl font-bold text-teal-600">{successRate.toFixed(1)}%</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600/80 shadow-lg shadow-teal-500/20">
+                <CheckCircle className="h-5 w-5 text-white" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -370,46 +391,55 @@ export function TransactionManagement() {
 
       {/* Quick Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium">Completed</h3>
-              <CheckCircle className="h-5 w-5 text-green-500" />
+              <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                <CheckCircle className="h-4 w-4 text-emerald-600" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-green-600">{completedTransactions}</p>
-            <Progress value={(completedTransactions / totalTransactions) * 100} className="mt-2" />
+            <p className="text-2xl font-bold text-emerald-600">{completedTransactions}</p>
+            <Progress value={(completedTransactions / totalTransactions) * 100} className="mt-2 h-2" />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium">Pending</h3>
-              <Clock className="h-5 w-5 text-yellow-500" />
+              <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                <Clock className="h-4 w-4 text-amber-600" />
+              </div>
             </div>
-            <p className="text-2xl font-bold text-yellow-600">{pendingTransactions}</p>
-            <Progress value={(pendingTransactions / totalTransactions) * 100} className="mt-2" />
+            <p className="text-2xl font-bold text-amber-600">{pendingTransactions}</p>
+            <Progress value={(pendingTransactions / totalTransactions) * 100} className="mt-2 h-2" />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium">Failed</h3>
-              <XCircle className="h-5 w-5 text-red-500" />
+              <div className="p-1.5 rounded-lg bg-red-100 dark:bg-red-900/30">
+                <XCircle className="h-4 w-4 text-red-600" />
+              </div>
             </div>
             <p className="text-2xl font-bold text-red-600">{failedTransactions}</p>
-            <Progress value={(failedTransactions / totalTransactions) * 100} className="mt-2" />
+            <Progress value={(failedTransactions / totalTransactions) * 100} className="mt-2 h-2" />
           </CardContent>
         </Card>
       </div>
 
       {/* Transaction Management */}
-      <Card>
+      <Card className="border-0 shadow-md">
         <CardHeader>
-          <CardTitle>Transaction Management</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-primary" />
+            Transaction History
+          </CardTitle>
           <CardDescription>
-            Monitor and manage all platform transactions
+            View and filter all platform transactions
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -422,16 +452,16 @@ export function TransactionManagement() {
                   placeholder="Search by transaction ID, description, or user..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 rounded-xl border-muted"
                 />
               </div>
             </div>
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-full md:w-48">
+              <SelectTrigger className="w-full md:w-48 rounded-xl border-muted">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="purchase">Purchase</SelectItem>
                 <SelectItem value="sale">Sale</SelectItem>
@@ -442,10 +472,10 @@ export function TransactionManagement() {
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-48">
+              <SelectTrigger className="w-full md:w-48 rounded-xl border-muted">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
@@ -454,14 +484,14 @@ export function TransactionManagement() {
               </SelectContent>
             </Select>
 
-            <Button variant="outline">
+            <Button variant="outline" className="rounded-xl">
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
           </div>
 
           {/* Transactions Table */}
-          <div className="rounded-md border">
+          <div className="rounded-xl border border-muted overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>

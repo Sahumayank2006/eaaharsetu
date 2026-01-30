@@ -248,21 +248,25 @@ export function TruckTracking() {
   const statusOptions = ['scheduled', 'in-transit', 'arrived', 'loading', 'departed', 'delivered'];
 
   return (
-    <Card className="mx-2 sm:mx-0">
+    <Card className="w-full mx-2 sm:mx-0 border-0 shadow-md">
       <CardHeader className="px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Truck className="h-5 w-5" />
-              Truck Movement Tracking
-            </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              Monitor incoming and outgoing trucks for efficient warehouse operations.
-            </CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+              <Truck className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-base sm:text-lg">
+                Truck Movement Tracking
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Monitor incoming and outgoing trucks for efficient warehouse operations
+              </CardDescription>
+            </div>
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" onClick={() => {
+              <Button size="sm" className="rounded-xl shadow-md shadow-primary/20" onClick={() => {
                 reset();
                 setEditingTruck(null);
               }}>
@@ -270,7 +274,7 @@ export function TruckTracking() {
                 Add Truck
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] rounded-xl">
               <DialogHeader>
                 <DialogTitle>{editingTruck ? 'Edit Truck Record' : 'Add New Truck'}</DialogTitle>
                 <DialogDescription>
@@ -284,16 +288,17 @@ export function TruckTracking() {
                     <Input
                       id="truckNumber"
                       placeholder="MH 12 AB 1234"
+                      className="rounded-xl border-muted"
                       {...register('truckNumber', { required: true })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="type">Movement Type</Label>
                     <Select onValueChange={(value) => setValue('type', value as 'incoming' | 'outgoing')} value={watch('type')}>
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-xl border-muted">
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="rounded-xl">
                         <SelectItem value="incoming">Incoming</SelectItem>
                         <SelectItem value="outgoing">Outgoing</SelectItem>
                       </SelectContent>

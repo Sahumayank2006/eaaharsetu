@@ -213,7 +213,7 @@ export function NotificationDropdown({ isSidebarItem }: { isSidebarItem?: boolea
             ))}
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="justify-center">
+        <DropdownMenuItem className="justify-center" onClick={() => toast({ title: "All Notifications", description: "Opening full notifications page..." })}>
           <Button variant="link" size="sm" className="w-full">View all notifications</Button>
         </DropdownMenuItem>
       </DropdownMenuContent>

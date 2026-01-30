@@ -118,46 +118,55 @@ export function SidebarNav() {
 
   return (
     <>
-      <SidebarHeader>
-        <div className="flex items-center justify-center p-0">
-          <Image src="https://i.ibb.co/JwHdxbZ6/Generated-Image-September-10-2025-7-55-PM.png" alt="eAaharSetu Logo" width={220} height={75} />
+      <SidebarHeader className="border-b border-sidebar-border/50 pb-4">
+        <div className="flex items-center justify-center p-2">
+          <Image src="https://i.ibb.co/JwHdxbZ6/Generated-Image-September-10-2025-7-55-PM.png" alt="eAaharSetu Logo" width={180} height={60} className="drop-shadow-sm" />
         </div>
       </SidebarHeader>
-      <SidebarContent className="p-2">
-        <SidebarMenu>
-          {currentNavItems.map((item, index) => (
-            <SidebarMenuItem key={index}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-                tooltip={{ children: t(item.labelKey, item.defaultLabel) }}
-              >
-                <Link 
-                  href={`${item.href}${roleQuery}`}
+      <SidebarContent className="p-3">
+        <SidebarMenu className="space-y-1">
+          {currentNavItems.map((item, index) => {
+            const isActive = pathname === item.href;
+            return (
+              <SidebarMenuItem key={index}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive}
+                  tooltip={{ children: t(item.labelKey, item.defaultLabel) }}
+                  className={cn(
+                    "rounded-xl transition-all duration-200",
+                    isActive 
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90" 
+                      : "hover:bg-muted"
+                  )}
                 >
-                  <item.icon />
-                  <span>{t(item.labelKey, item.defaultLabel)}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                  <Link href={`${item.href}${roleQuery}`}>
+                    <item.icon className={cn("h-4 w-4", isActive && "text-primary-foreground")} />
+                    <span className="font-medium">{t(item.labelKey, item.defaultLabel)}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+
+          <div className="my-4 border-t border-sidebar-border/50" />
 
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton>
-                            <Languages />
-                            <span>{t('language', 'Language')}</span>
-                            <span className="ml-auto text-muted-foreground">{content[lang].langName}</span>
+                        <SidebarMenuButton className="rounded-xl hover:bg-muted">
+                            <Languages className="h-4 w-4" />
+                            <span className="font-medium">{t('language', 'Language')}</span>
+                            <span className="ml-auto text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{content[lang].langName}</span>
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                        <DropdownMenuItem onClick={() => setLang('en')}>English</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLang('hi')}>हिंदी</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLang('bn')}>বাংলা</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLang('te')}>తెలుగు</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLang('mr')}>मराठी</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLang('ta')}>தமிழ்</DropdownMenuItem>
+                    <DropdownMenuContent className="w-56 rounded-xl" align="end" forceMount>
+                        <DropdownMenuItem onClick={() => setLang('en')} className="rounded-lg">English</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLang('hi')} className="rounded-lg">हिंदी</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLang('bn')} className="rounded-lg">বাংলা</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLang('te')} className="rounded-lg">తెలుగు</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLang('mr')} className="rounded-lg">मराठी</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLang('ta')} className="rounded-lg">தமிழ்</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>
@@ -165,23 +174,23 @@ export function SidebarNav() {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton>
-                            <User />
-                            <span>{t('profile', 'Profile')}</span>
-                            <MoreHorizontal className="ml-auto h-4 w-4" />
+                        <SidebarMenuButton className="rounded-xl hover:bg-muted">
+                            <User className="h-4 w-4" />
+                            <span className="font-medium">{t('profile', 'Profile')}</span>
+                            <MoreHorizontal className="ml-auto h-4 w-4 text-muted-foreground" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                      <DropdownMenuLabel className="font-normal">
+                    <DropdownMenuContent className="w-64 rounded-xl p-2" align="end" forceMount>
+                      <DropdownMenuLabel className="font-normal p-3">
                         <div className="flex items-center gap-3">
-                           <Avatar className="h-10 w-10">
+                           <Avatar className="h-12 w-12 ring-2 ring-primary/20">
                               <AvatarImage src={`https://i.pravatar.cc/150?u=${role}`} alt="User avatar" />
-                              <AvatarFallback>
+                              <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                               {currentRoleName.charAt(0)}
                               </AvatarFallback>
                            </Avatar>
                            <div className="flex flex-col space-y-1">
-                              <p className="text-sm font-medium leading-none">
+                              <p className="text-sm font-semibold leading-none">
                                 {currentRoleName}
                               </p>
                               <p className="text-xs leading-none text-muted-foreground">
@@ -191,20 +200,20 @@ export function SidebarNav() {
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem asChild className="rounded-lg">
                         <Link href={`/dashboard/profile${roleQuery}`}>
                           <User className="mr-2 h-4 w-4" />
                           <span>{t("profile", "Profile")}</span>
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem asChild className="rounded-lg">
                         <Link href={`/dashboard/settings${roleQuery}`}>
                           <Settings className="mr-2 h-4 w-4" />
                           <span>{t("settings", "Settings")}</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem asChild className="rounded-lg text-destructive focus:text-destructive">
                         <Link href="/">
                           <LogOut className="mr-2 h-4 w-4" />
                           <span>{t("logout", "Log out")}</span>
@@ -215,31 +224,29 @@ export function SidebarNav() {
             </SidebarMenuItem>
 
             {role === 'farmer' && (
-                 <div className="mt-4 p-2">
-                    <p className="text-xs text-muted-foreground px-2">{t("total_revenue", "Total Revenue")}</p>
-                    <p className="text-lg font-semibold px-2">₹1,25,430</p>
+                 <div className="mt-4 p-4 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+                    <p className="text-xs text-muted-foreground font-medium">{t("total_revenue", "Total Revenue")}</p>
+                    <p className="text-xl font-bold text-primary">₹1,25,430</p>
                 </div>
             )}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="flex flex-col gap-3 rounded-md p-3 bg-muted/50">
-           <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={`https://i.pravatar.cc/150?u=${role}`} alt="User avatar" />
-                  <AvatarFallback>
-                  {currentRoleName.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                    <p className="text-sm font-medium leading-none">
-                    {currentRoleName}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                    {role}@eaaharsetu.com
-                    </p>                    
-                </div>
+      <SidebarFooter className="border-t border-sidebar-border/50 p-3">
+        <div className="flex flex-col gap-3 rounded-xl p-4 bg-gradient-to-br from-muted/80 to-muted/40">
+           <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 ring-2 ring-background shadow-md">
+                <AvatarImage src={`https://i.pravatar.cc/150?u=${role}`} alt="User avatar" />
+                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                {currentRoleName.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                  <p className="text-sm font-semibold leading-none">
+                  {currentRoleName}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                  {role}@eaaharsetu.com
+                  </p>                    
               </div>
             </div>
         </div>

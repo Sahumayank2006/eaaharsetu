@@ -87,108 +87,123 @@ export function FarmerProfileForm() {
   }
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex flex-col items-center mb-6">
-              <Avatar className="h-24 w-24 mb-4">
-                <AvatarImage src={profileUrl} />
-                <AvatarFallback>
-                  <User className="h-12 w-12" />
-                </AvatarFallback>
-              </Avatar>
-              <FormField
-                control={form.control}
-                name="profilePicture"
-                render={({ field: { onChange, ...field } }) => (
-                  <FormItem>
-                    <FormLabel className="cursor-pointer">
-                      <div className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md">
-                        <Camera className="h-4 w-4" />
-                        {uploading ? "Uploading..." : "Change Profile Picture"}
-                      </div>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            onChange(file);
-                            uploadProfilePicture(file);
-                          }
-                        }}
-                        {...field}
-                      />
-                    </FormLabel>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="space-y-6">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Profile Settings</h2>
+          <p className="text-muted-foreground">
+            Manage your farmer profile and verification documents.
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+          <User className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
+      <Card className="border-0 shadow-md">
+        <CardContent className="pt-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="flex flex-col items-center mb-6">
+                <Avatar className="h-24 w-24 mb-4 ring-4 ring-background shadow-lg">
+                  <AvatarImage src={profileUrl} />
+                  <AvatarFallback className="bg-muted">
+                    <User className="h-12 w-12 text-muted-foreground" />
+                  </AvatarFallback>
+                </Avatar>
                 <FormField
-                    control={form.control}
-                    name="fullName"
-                    render={({ field }) => (
+                  control={form.control}
+                  name="profilePicture"
+                  render={({ field: { onChange, ...field } }) => (
                     <FormItem>
-                        <FormLabel className="flex items-center gap-2"><User className="h-4 w-4" />Full Name*</FormLabel>
-                        <FormControl>
-                        <Input placeholder="Enter your full name" {...field} />
-                        </FormControl>
-                        <FormMessage />
+                      <FormLabel className="cursor-pointer">
+                        <div className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl shadow-md shadow-primary/20 hover:opacity-90 transition-opacity">
+                          <Camera className="h-4 w-4" />
+                          {uploading ? "Uploading..." : "Change Profile Picture"}
+                        </div>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              onChange(file);
+                              uploadProfilePicture(file);
+                            }
+                          }}
+                          {...field}
+                        />
+                      </FormLabel>
+                      <FormMessage />
                     </FormItem>
-                    )}
+                  )}
                 />
-                <FormField
-                    control={form.control}
-                    name="mobileNumber"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="flex items-center gap-2"><Phone className="h-4 w-4" />Mobile Number*</FormLabel>
-                        <FormControl>
-                        <Input type="tel" placeholder="Enter 10-digit mobile number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="aadhaarNumber"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="flex items-center gap-2"><Fingerprint className="h-4 w-4" />Aadhaar Number*</FormLabel>
-                        <FormControl>
-                        <Input placeholder="Enter 12-digit Aadhaar number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="idProof"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Upload ID Proof*</FormLabel>
-                        <FormControl>
-                        <Input type="file" {...field} />
-                        </FormControl>
-                        <FormDescription>Upload Aadhaar or other valid government ID.</FormDescription>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-            </div>
-            
-            <Button type="submit" size="lg">
-              <FileText className="mr-2 h-4 w-4" /> Save Profile
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+              </div>
+              <div className="space-y-6">
+                  <FormField
+                      control={form.control}
+                      name="fullName"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel className="flex items-center gap-2"><User className="h-4 w-4" />Full Name*</FormLabel>
+                          <FormControl>
+                          <Input placeholder="Enter your full name" className="rounded-xl border-muted" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+                  <FormField
+                      control={form.control}
+                      name="mobileNumber"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel className="flex items-center gap-2"><Phone className="h-4 w-4" />Mobile Number*</FormLabel>
+                          <FormControl>
+                          <Input type="tel" placeholder="Enter 10-digit mobile number" className="rounded-xl border-muted" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+                  <FormField
+                      control={form.control}
+                      name="aadhaarNumber"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel className="flex items-center gap-2"><Fingerprint className="h-4 w-4" />Aadhaar Number*</FormLabel>
+                          <FormControl>
+                          <Input placeholder="Enter 12-digit Aadhaar number" className="rounded-xl border-muted" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+                  <FormField
+                      control={form.control}
+                      name="idProof"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel>Upload ID Proof*</FormLabel>
+                          <FormControl>
+                          <Input type="file" className="rounded-xl border-muted" {...field} />
+                          </FormControl>
+                          <FormDescription>Upload Aadhaar or other valid government ID.</FormDescription>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+              </div>
+              
+              <Button type="submit" size="lg" className="rounded-xl shadow-md shadow-primary/20">
+                <FileText className="mr-2 h-4 w-4" /> Save Profile
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

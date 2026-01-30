@@ -11,6 +11,7 @@ import {
   Settings,
   Sun,
   User,
+  Menu,
 } from "lucide-react";
 
 import {
@@ -41,8 +42,6 @@ function getRoleName(role: Role | null, lang: 'en' | 'hi' | 'bn' | 'te' | 'mr' |
   const roleKey = role.replace(/-/g, '_') as keyof (typeof content)['en']['roles'][0];
   const roleInfo = content.en.roles.find(r => r.role === role);
   
-  // This is a simplified lookup, for full translation we'd use the `t` function
-  // but we can't use hooks at this top level easily.
   const names: Record<string, string> = {
       farmer: "Farmer",
       dealer: "Dealer",
@@ -51,7 +50,6 @@ function getRoleName(role: Role | null, lang: 'en' | 'hi' | 'bn' | 'te' | 'mr' |
       logistics: "Logistics",
   };
   
-  // A more robust solution would involve the full `t` function if we restructure
   return names[role] || "User";
 }
 
@@ -69,17 +67,32 @@ export function Header() {
   const currentRoleName = getRoleName(role, lang);
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-zinc-800 bg-header text-header-foreground px-4 backdrop-blur-sm sm:px-6 lg:px-8">
-      <div className="flex items-center gap-2">
-        <SidebarTrigger className="md:hidden" />
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between bg-gradient-to-r from-[#F97316] via-[#EA580C] to-[#C2410C] text-white px-4 shadow-lg shadow-orange-500/10 sm:px-6 lg:px-8">
+      {/* Left side - Mobile menu */}
+      <div className="flex items-center gap-3">
+        <SidebarTrigger className="md:hidden text-white hover:bg-white/10 rounded-lg p-2 transition-colors">
+          <Menu className="h-5 w-5" />
+        </SidebarTrigger>
       </div>
 
+      {/* Center - Title */}
       <div className="flex flex-1 items-center justify-center">
-        <h1 className="text-xl font-semibold text-center">{currentRoleName} {t('dashboard', 'Dashboard')}</h1>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
+            <Home className="h-4 w-4" />
+          </div>
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight">
+            {currentRoleName} {t('dashboard', 'Dashboard')}
+          </h1>
+        </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Language dropdown removed from here */}
+      {/* Right side - Actions */}
+      <div className="flex items-center gap-2">
+        {/* Notification bell - placeholder */}
+        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
+          <Bell className="h-5 w-5" />
+        </Button>
       </div>
     </header>
   );

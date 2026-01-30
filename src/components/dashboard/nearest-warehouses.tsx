@@ -49,16 +49,23 @@ export function NearestWarehouses() {
   const { lang, t } = useTranslation();
 
   return (
-    <Card>
+    <Card className="border-0 shadow-md">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Warehouse /> {t('nearest_warehouses', "Nearest Warehouses")}</CardTitle>
-        <CardDescription>
-          {t('nearest_warehouses_desc', "Find available storage facilities near your farm location.")}
-        </CardDescription>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+            <Warehouse className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <CardTitle>{t('nearest_warehouses', "Nearest Warehouses")}</CardTitle>
+            <CardDescription>
+              {t('nearest_warehouses_desc', "Find available storage facilities near your farm location")}
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {mockWarehouses.map((warehouse) => (
-          <Card key={warehouse.id} className="overflow-hidden">
+          <Card key={warehouse.id} className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300">
             <Link href={`/dashboard/book-slot?role=farmer&lang=${lang}&warehouse=${warehouse.id}`} passHref>
                 <div className="relative h-32 w-full cursor-pointer">
                     <Image
@@ -69,7 +76,7 @@ export function NearestWarehouses() {
                         className="transition-transform duration-300 hover:scale-105"
                         data-ai-hint={warehouse.dataAiHint}
                     />
-                    <div className="absolute inset-0 bg-black/30"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                     <div className="absolute top-2 left-2">
                          <Badge 
                             variant={
@@ -77,8 +84,8 @@ export function NearestWarehouses() {
                                 warehouse.availability === "Limited Slots" ? "secondary" : "destructive"
                             }
                             className={
-                                warehouse.availability === "Available" ? "bg-green-600 text-white" :
-                                warehouse.availability === "Limited Slots" ? "bg-amber-500 text-white" : ""
+                                warehouse.availability === "Available" ? "bg-emerald-600 text-white rounded-lg" :
+                                warehouse.availability === "Limited Slots" ? "bg-amber-500 text-white rounded-lg" : "rounded-lg"
                             }
                         >
                             {t(warehouse.availabilityKey, warehouse.availability)}
@@ -95,7 +102,7 @@ export function NearestWarehouses() {
               <Button 
                 asChild 
                 size="sm"
-                className="w-full mt-4"
+                className="w-full mt-4 rounded-xl shadow-md shadow-primary/20"
                 disabled={warehouse.availability === "Full"}
               >
                 <Link href={`/dashboard/book-slot?role=farmer&lang=${lang}&warehouse=${warehouse.id}`}>

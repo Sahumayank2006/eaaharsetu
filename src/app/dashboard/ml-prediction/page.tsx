@@ -190,7 +190,7 @@ export default function MLPredictionPage() {
       }
 
       const data = await response.json();
-      console.log('✅ ML API Response:', data);
+      console.log('ML API Response:', data);
       
       // Extract the prediction data from the response
       const predictionData = data.prediction || {};
@@ -218,7 +218,7 @@ export default function MLPredictionPage() {
       setPredictions(prev => [...prev, newPrediction]);
       setPredictionLoading(false);
     } catch (err) {
-      console.warn('⚠️ ML API unavailable, using local prediction model:', err);
+      console.warn('ML API unavailable, using local prediction model:', err);
       
       // Generate local prediction using advanced rules
       const localPrediction = generateLocalPrediction(temp, hum);
@@ -440,7 +440,7 @@ export default function MLPredictionPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-6 w-6 text-primary" />
-              📊 Full Prediction Results
+              Full Prediction Results
             </CardTitle>
             <CardDescription>
               Comprehensive analysis from ML model • Last updated: {new Date(latestPrediction.timestamp).toLocaleString()}
@@ -538,7 +538,7 @@ export default function MLPredictionPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-900">
               <Lightbulb className="h-6 w-6" />
-              💡 AI-Powered Recommendations
+              AI-Powered Recommendations
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -565,8 +565,8 @@ export default function MLPredictionPage() {
                   </h4>
                   <p className="text-sm text-gray-700">
                     {latestFullPrediction.safe_storage_temp && latestPrediction.temperature > latestFullPrediction.safe_storage_temp
-                      ? `⚠️ Current temperature (${latestPrediction.temperature.toFixed(1)}°C) exceeds safe limit. Reduce to ${latestFullPrediction.safe_storage_temp.toFixed(1)}°C immediately.`
-                      : `✓ Temperature is within safe range. Maintain at ${latestFullPrediction.safe_storage_temp?.toFixed(1) || '--'}°C.`
+                      ? `Warning: Current temperature (${latestPrediction.temperature.toFixed(1)}°C) exceeds safe limit. Reduce to ${latestFullPrediction.safe_storage_temp.toFixed(1)}°C immediately.`
+                      : `Temperature is within safe range. Maintain at ${latestFullPrediction.safe_storage_temp?.toFixed(1) || '--'}°C.`
                     }
                   </p>
                 </div>
@@ -578,10 +578,10 @@ export default function MLPredictionPage() {
                   </h4>
                   <p className="text-sm text-gray-700">
                     {latestFullPrediction.spoilage_time_days && latestFullPrediction.spoilage_time_days < 7
-                      ? `🔴 Critical: Only ${latestFullPrediction.spoilage_time_days.toFixed(1)} days until spoilage. Act now!`
+                      ? `Critical: Only ${latestFullPrediction.spoilage_time_days.toFixed(1)} days until spoilage. Act now!`
                       : latestFullPrediction.spoilage_time_days && latestFullPrediction.spoilage_time_days < 14
-                      ? `🟡 Warning: ${latestFullPrediction.spoilage_time_days.toFixed(1)} days remaining. Plan distribution soon.`
-                      : `🟢 ${latestFullPrediction.spoilage_time_days?.toFixed(1) || '--'} days available for safe storage.`
+                      ? `Warning: ${latestFullPrediction.spoilage_time_days.toFixed(1)} days remaining. Plan distribution soon.`
+                      : `${latestFullPrediction.spoilage_time_days?.toFixed(1) || '--'} days available for safe storage.`
                     }
                   </p>
                 </div>
@@ -593,7 +593,7 @@ export default function MLPredictionPage() {
                   </h4>
                   <p className="text-sm text-gray-700">
                     {latestFullPrediction.yield_loss_percentage && latestFullPrediction.yield_loss_percentage > 30
-                      ? `⚠️ High yield loss predicted (${latestFullPrediction.yield_loss_percentage.toFixed(1)}%). Implement preservation measures.`
+                      ? `Warning: High yield loss predicted (${latestFullPrediction.yield_loss_percentage.toFixed(1)}%). Implement preservation measures.`
                       : `Quality loss: ${latestFullPrediction.yield_loss_percentage?.toFixed(1) || '--'}%. Continue monitoring.`
                     }
                   </p>
@@ -606,7 +606,7 @@ export default function MLPredictionPage() {
                   </h4>
                   <p className="text-sm text-gray-700">
                     {latestFullPrediction.self_heating_risk && latestFullPrediction.self_heating_risk > 200
-                      ? `🔴 Extreme self-heating risk (${latestFullPrediction.self_heating_risk.toFixed(1)}%). Increase ventilation immediately!`
+                      ? `Critical: Extreme self-heating risk (${latestFullPrediction.self_heating_risk.toFixed(1)}%). Increase ventilation immediately!`
                       : `Self-heating risk: ${latestFullPrediction.self_heating_risk?.toFixed(1) || '--'}%. Monitor closely.`
                     }
                   </p>

@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { RequestTransportForm } from "./request-transport-form";
+import { useToast } from "@/hooks/use-toast";
 
 const transportRequests = [
     { id: "TR-001", crop: "Wheat", status: "En Route", vehicle: "MH12-3456", eta: "2 hours" },
@@ -40,16 +41,29 @@ const transportHistory = [
 ];
 
 function ManageRequests() {
+    const { toast } = useToast();
+    
+    const handleViewDetails = (id: string, crop: string, status: string) => {
+        toast({
+            title: `Transport ${id}`,
+            description: `Crop: ${crop}, Status: ${status}. Full tracking coming soon!`,
+        });
+    };
+
     return (
-        <Card>
+        <Card className="border-0 shadow-md">
             <CardHeader>
-                <CardTitle>Manage Transport Requests</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <List className="h-5 w-5 text-primary" />
+                  Manage Transport Requests
+                </CardTitle>
                 <CardDescription>View the status of all your current transport requests.</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="rounded-xl border border-muted overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="bg-muted/50">
                             <TableHead>Request ID</TableHead>
                             <TableHead>Crop</TableHead>
                             <TableHead>Vehicle No.</TableHead>
@@ -60,23 +74,31 @@ function ManageRequests() {
                     </TableHeader>
                     <TableBody>
                         {transportRequests.map((request) => (
-                            <TableRow key={request.id}>
+                            <TableRow key={request.id} className="hover:bg-muted/30 transition-colors">
                                 <TableCell className="font-medium">{request.id}</TableCell>
                                 <TableCell>{request.crop}</TableCell>
                                 <TableCell>{request.vehicle}</TableCell>
                                 <TableCell>{request.eta}</TableCell>
                                 <TableCell>
-                                    <Badge variant={request.status === 'En Route' ? 'default' : 'secondary'} className={request.status === 'En Route' ? 'bg-blue-600' : ''}>
+                                    <Badge className={`rounded-lg ${request.status === 'En Route' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-amber-500 hover:bg-amber-600'}`}>
                                         {request.status}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="outline" size="sm">Details</Button>
+                                    <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="rounded-lg"
+                                        onClick={() => handleViewDetails(request.id, request.crop, request.status)}
+                                    >
+                                        Details
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </CardContent>
         </Card>
     )
@@ -84,15 +106,19 @@ function ManageRequests() {
 
 function TransportHistory() {
      return (
-        <Card>
+        <Card className="border-0 shadow-md">
             <CardHeader>
-                <CardTitle>Transport History</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5 text-primary" />
+                  Transport History
+                </CardTitle>
                 <CardDescription>A log of all your past transport jobs.</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="rounded-xl border border-muted overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="bg-muted/50">
                             <TableHead>Job ID</TableHead>
                             <TableHead>Crop</TableHead>
                             <TableHead>Date</TableHead>
@@ -102,18 +128,19 @@ function TransportHistory() {
                     </TableHeader>
                     <TableBody>
                         {transportHistory.map((job) => (
-                            <TableRow key={job.id}>
+                            <TableRow key={job.id} className="hover:bg-muted/30 transition-colors">
                                 <TableCell className="font-medium">{job.id}</TableCell>
                                 <TableCell>{job.crop}</TableCell>
                                 <TableCell>{job.date}</TableCell>
-                                <TableCell>₹{job.cost.toLocaleString()}</TableCell>
+                                <TableCell className="font-medium text-emerald-600">₹{job.cost.toLocaleString()}</TableCell>
                                 <TableCell>
-                                    <Badge className="bg-green-600">{job.status}</Badge>
+                                    <Badge className="bg-emerald-500 hover:bg-emerald-600 rounded-lg">{job.status}</Badge>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </CardContent>
         </Card>
      )
@@ -122,60 +149,75 @@ function TransportHistory() {
 
 export function TransportTabs() {
   return (
-    <Tabs defaultValue="request-transport" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
-        <TabsTrigger value="request-transport">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Request Transport
-        </TabsTrigger>
-        <TabsTrigger value="manage-requests">
-          <List className="mr-2 h-4 w-4" />
-          Manage Requests
-        </TabsTrigger>
-        <TabsTrigger value="track-vehicle" disabled>
-          <MapPin className="mr-2 h-4 w-4" />
-          Track Vehicle
-        </TabsTrigger>
-        <TabsTrigger value="history">
-          <History className="mr-2 h-4 w-4" />
-          History
-        </TabsTrigger>
-        <TabsTrigger value="support">
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Support
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="request-transport">
-        <RequestTransportForm />
-      </TabsContent>
-      <TabsContent value="manage-requests">
-        <ManageRequests />
-      </TabsContent>
-       <TabsContent value="track-vehicle">
-          {/* Placeholder for Vehicle Tracking component */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Live Vehicle Tracking</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Live vehicle tracking functionality is coming soon.</p>
-            </CardContent>
-          </Card>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Transport & Logistics</h2>
+          <p className="text-muted-foreground">
+            Request transport, manage deliveries, and track vehicles
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-lg shadow-blue-500/20">
+          <MapPin className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
+      <Tabs defaultValue="request-transport" className="w-full">
+        <TabsList className="bg-muted/50 p-1 rounded-xl w-full grid grid-cols-2 md:grid-cols-5">
+          <TabsTrigger value="request-transport" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Request Transport
+          </TabsTrigger>
+          <TabsTrigger value="manage-requests" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <List className="mr-2 h-4 w-4" />
+            Manage Requests
+          </TabsTrigger>
+          <TabsTrigger value="track-vehicle" disabled className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <MapPin className="mr-2 h-4 w-4" />
+            Track Vehicle
+          </TabsTrigger>
+          <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <History className="mr-2 h-4 w-4" />
+            History
+          </TabsTrigger>
+          <TabsTrigger value="support" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Support
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="request-transport">
+          <RequestTransportForm />
         </TabsContent>
-      <TabsContent value="history">
-        <TransportHistory />
-      </TabsContent>
-      <TabsContent value="support">
-          <Card>
-            <CardHeader>
-              <CardTitle>Support & FAQ</CardTitle>
-              <CardDescription>Find answers to common questions about transport and logistics.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Support and FAQ section coming soon.</p>
-            </CardContent>
-          </Card>
-      </TabsContent>
-    </Tabs>
+        <TabsContent value="manage-requests">
+          <ManageRequests />
+        </TabsContent>
+         <TabsContent value="track-vehicle">
+            {/* Placeholder for Vehicle Tracking component */}
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle>Live Vehicle Tracking</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Live vehicle tracking functionality is coming soon.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        <TabsContent value="history">
+          <TransportHistory />
+        </TabsContent>
+        <TabsContent value="support">
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle>Support & FAQ</CardTitle>
+                <CardDescription>Find answers to common questions about transport and logistics.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Support and FAQ section coming soon.</p>
+              </CardContent>
+            </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

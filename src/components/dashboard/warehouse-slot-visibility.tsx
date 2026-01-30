@@ -54,17 +54,17 @@ interface Slot {
 const getStatusBadge = (status: string, t: (key: string, defaultText: string) => string) => {
     switch (status.toLowerCase()) {
         case 'completed':
-            return <Badge className="bg-green-600 text-white hover:bg-green-700"><CheckCircle className="mr-1 h-3 w-3"/>{t('completed', status)}</Badge>;
+            return <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-lg"><CheckCircle className="mr-1 h-3 w-3"/>{t('completed', status)}</Badge>;
         case 'upcoming':
-            return <Badge className="bg-blue-500 text-white hover:bg-blue-600"><Clock className="mr-1 h-3 w-3"/>{t('upcoming', status)}</Badge>;
+            return <Badge className="bg-blue-500 text-white hover:bg-blue-600 rounded-lg"><Clock className="mr-1 h-3 w-3"/>{t('upcoming', status)}</Badge>;
         case 'cancelled':
-            return <Badge variant="destructive"><XCircle className="mr-1 h-3 w-3"/>{t('cancelled', status)}</Badge>;
+            return <Badge className="bg-red-500 text-white hover:bg-red-600 rounded-lg"><XCircle className="mr-1 h-3 w-3"/>{t('cancelled', status)}</Badge>;
         case 'accepted':
-            return <Badge className="bg-green-600 text-white hover:bg-green-700"><Check className="mr-1 h-3 w-3"/>{t('accepted', status)}</Badge>;
+            return <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-lg"><Check className="mr-1 h-3 w-3"/>{t('accepted', status)}</Badge>;
         case 'rejected':
-            return <Badge variant="destructive"><Ban className="mr-1 h-3 w-3"/>{t('rejected', status)}</Badge>;
+            return <Badge className="bg-red-500 text-white hover:bg-red-600 rounded-lg"><Ban className="mr-1 h-3 w-3"/>{t('rejected', status)}</Badge>;
         default:
-            return <Badge variant="outline">{t(status.toLowerCase(), status)}</Badge>;
+            return <Badge variant="outline" className="rounded-lg">{t(status.toLowerCase(), status)}</Badge>;
     }
 }
 
@@ -171,12 +171,17 @@ export function WarehouseSlotVisibility() {
   const hasMoreSlots = bookedSlots.length > INITIAL_DISPLAY_COUNT;
 
   return (
-    <Card className="mx-2 sm:mx-0">
+    <Card className="w-full mx-2 sm:mx-0 border-0 shadow-md">
       <CardHeader className="px-4 sm:px-6">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base sm:text-lg">{t('upcoming_slot_bookings', "Upcoming Slot Bookings")}</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Clock className="h-4 w-4 text-primary" />
+              </div>
+              {t('upcoming_slot_bookings', "Upcoming Slot Bookings")}
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm mt-1">
               {t('upcoming_slot_bookings_desc', "Review and manage scheduled drop-offs from farmers.")}
             </CardDescription>
           </div>
@@ -185,7 +190,7 @@ export function WarehouseSlotVisibility() {
               variant="outline" 
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 rounded-xl"
             >
               {isExpanded ? (
                 <>
@@ -209,10 +214,10 @@ export function WarehouseSlotVisibility() {
             </div>
         ) : (
         <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <div className="overflow-x-auto">
+            <div className="rounded-xl border border-muted overflow-hidden">
                 <Table className="min-w-full">
                 <TableHeader>
-                    <TableRow>
+                    <TableRow className="bg-muted/50">
                     <TableHead className="text-xs sm:text-sm">{t('farmer', "Farmer")}</TableHead>
                     <TableHead className="text-xs sm:text-sm hidden sm:table-cell">{t('crop_type', "Crop Type")}</TableHead>
                     <TableHead className="text-xs sm:text-sm">{t('quantity', "Quantity")}</TableHead>
@@ -223,12 +228,12 @@ export function WarehouseSlotVisibility() {
                 </TableHeader>
             <TableBody>
                 {displayedSlots.map((slot) => (
-                <TableRow key={slot.id}>
+                <TableRow key={slot.id} className="hover:bg-muted/30 transition-colors">
                     <TableCell className="p-2 sm:p-4">
                     <div className="flex items-center gap-2 sm:gap-3">
-                        <Avatar className="h-6 w-6 sm:h-9 sm:w-9 flex-shrink-0">
+                        <Avatar className="h-6 w-6 sm:h-9 sm:w-9 flex-shrink-0 rounded-lg">
                         <AvatarImage src={slot.farmerAvatar} alt={slot.farmerName} />
-                        <AvatarFallback className="text-xs">{slot.farmerName.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="text-xs rounded-lg">{slot.farmerName.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
                             <span className="font-medium text-xs sm:text-sm truncate block">{slot.farmerName}</span>
@@ -237,13 +242,13 @@ export function WarehouseSlotVisibility() {
                     </div>
                     </TableCell>
                     <TableCell className="p-2 sm:p-4 hidden sm:table-cell text-xs sm:text-sm">{slot.cropType}</TableCell>
-                    <TableCell className="p-2 sm:p-4 text-xs sm:text-sm">{slot.quantity} {slot.unit}</TableCell>
+                    <TableCell className="p-2 sm:p-4 text-xs sm:text-sm font-medium">{slot.quantity} {slot.unit}</TableCell>
                     <TableCell className="p-2 sm:p-4 hidden md:table-cell text-xs sm:text-sm">{format(slot.bookingDate.toDate(), "PPP")}</TableCell>
                     <TableCell className="p-2 sm:p-4">{getStatusBadge(slot.status, t)}</TableCell>
                     <TableCell className="p-2 sm:p-4 text-right">
                         <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-6 w-6 sm:h-8 sm:w-8 p-0">
+                            <Button variant="ghost" className="h-6 w-6 sm:h-8 sm:w-8 p-0 rounded-lg">
                             <span className="sr-only">Open menu</span>
                             <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
                             </Button>
@@ -265,7 +270,12 @@ export function WarehouseSlotVisibility() {
                             <Ban className="mr-2 h-4 w-4" />
                             {t('reject', "Reject")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                                toast({
+                                    title: t('farmer_profile', "Farmer Profile"),
+                                    description: t('farmer_profile_desc', `Viewing profile of ${slot.farmerName}. Contact: ${slot.farmerId}`),
+                                });
+                            }}>
                                 <User className="mr-2 h-4 w-4" />
                                 {t('view_farmer_profile', "View Farmer Profile")}
                             </DropdownMenuItem>

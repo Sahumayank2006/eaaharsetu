@@ -56,6 +56,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 interface InventoryItem {
   id: string;
@@ -126,9 +127,9 @@ const categories = ["All", "Grains"];
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "in-stock":
-      return <Badge className="bg-green-500"><PackageCheck className="w-3 h-3 mr-1" />In Stock</Badge>;
+      return <Badge className="bg-emerald-500 hover:bg-emerald-600"><PackageCheck className="w-3 h-3 mr-1" />In Stock</Badge>;
     case "low-stock":
-      return <Badge variant="destructive" className="bg-amber-500"><AlertTriangle className="w-3 h-3 mr-1" />Low Stock</Badge>;
+      return <Badge className="bg-amber-500 hover:bg-amber-600"><AlertTriangle className="w-3 h-3 mr-1" />Low Stock</Badge>;
     case "out-of-stock":
       return <Badge variant="destructive"><PackageX className="w-3 h-3 mr-1" />Out of Stock</Badge>;
     case "expiring-soon":
@@ -142,6 +143,30 @@ export function InventoryManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [inventory, setInventory] = useState(dummyInventory);
+  const { toast } = useToast();
+
+  // Handler functions
+  const handleExport = () => {
+    toast({
+      title: "Exporting Data",
+      description: "Generating inventory report as CSV...",
+    });
+  };
+
+  const handleRefresh = () => {
+    // In a real app, this would fetch fresh data
+    toast({
+      title: "Data Refreshed",
+      description: "Inventory data has been updated.",
+    });
+  };
+
+  const handleAddItem = () => {
+    toast({
+      title: "Add New Item",
+      description: "Opening inventory item form...",
+    });
+  };
 
   // Calculate statistics
   const totalItems = inventory.reduce((sum, item) => sum + item.quantity, 0);
@@ -157,13 +182,28 @@ export function InventoryManagement() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Inventory Management</h2>
+          <p className="text-muted-foreground">
+            Track and manage your warehouse inventory
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+          <Package className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="hover:shadow-md transition-shadow">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600/80 shadow-md shadow-blue-500/20">
+              <Package className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalItems.toLocaleString()} kg</div>
@@ -171,35 +211,41 @@ export function InventoryManagement() {
           </CardContent>
         </Card>
         
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Low Stock Alerts</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600/80 shadow-md shadow-amber-500/20">
+              <AlertTriangle className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{lowStockItems}</div>
+            <div className="text-2xl font-bold text-amber-600">{lowStockItems}</div>
             <p className="text-xs text-muted-foreground">Items need restocking</p>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
-            <CalendarClock className="h-4 w-4 text-red-500" />
+            <div className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-red-600/80 shadow-md shadow-red-500/20">
+              <CalendarClock className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{expiringItems}</div>
+            <div className="text-2xl font-bold text-red-600">{expiringItems}</div>
             <p className="text-xs text-muted-foreground">Items need attention</p>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
-            <CircleDollarSign className="h-4 w-4 text-green-500" />
+            <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-md shadow-emerald-500/20">
+              <CircleDollarSign className="h-4 w-4 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-emerald-600">₹{totalValue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Current inventory value</p>
           </CardContent>
         </Card>
@@ -207,10 +253,10 @@ export function InventoryManagement() {
 
       {/* Inventory Management Tabs */}
       <Tabs defaultValue="inventory" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="inventory">Current Inventory</TabsTrigger>
-          <TabsTrigger value="movements">Stock Movements</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        <TabsList className="bg-muted/50 p-1 rounded-xl">
+          <TabsTrigger value="inventory" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">Current Inventory</TabsTrigger>
+          <TabsTrigger value="movements" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">Stock Movements</TabsTrigger>
+          <TabsTrigger value="analytics" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="inventory" className="space-y-4">
@@ -218,20 +264,20 @@ export function InventoryManagement() {
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
             <div className="flex flex-1 gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search inventory..."
-                  className="pl-8"
+                  className="pl-10 rounded-xl border-muted"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] rounded-xl border-muted">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl">
                   {categories.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
@@ -239,15 +285,15 @@ export function InventoryManagement() {
               </Select>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="rounded-lg" onClick={handleExport}>
                 <FileDown className="w-4 h-4 mr-2" />
                 Export
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="rounded-lg" onClick={handleRefresh}>
                 <RefreshCcw className="w-4 h-4 mr-2" />
                 Refresh
               </Button>
-              <Button size="sm">
+              <Button size="sm" className="rounded-lg shadow-md shadow-primary/20" onClick={handleAddItem}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Item
               </Button>
@@ -255,8 +301,8 @@ export function InventoryManagement() {
           </div>
 
           {/* Inventory Table */}
-          <div className="border rounded-lg">
-            <Table>
+          <div className="border border-muted rounded-xl w-full overflow-x-auto bg-card">
+            <Table className="w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>Item ID</TableHead>
@@ -290,9 +336,12 @@ export function InventoryManagement() {
         </TabsContent>
 
         <TabsContent value="movements">
-          <Card>
+          <Card className="border-0 shadow-md">
             <CardHeader>
-              <CardTitle>Stock Movements</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowDown className="h-5 w-5 text-primary" />
+                Stock Movements
+              </CardTitle>
               <CardDescription>Track incoming and outgoing inventory</CardDescription>
             </CardHeader>
             <CardContent>
@@ -304,9 +353,12 @@ export function InventoryManagement() {
         </TabsContent>
 
         <TabsContent value="analytics">
-          <Card>
+          <Card className="border-0 shadow-md">
             <CardHeader>
-              <CardTitle>Inventory Analytics</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Inventory Analytics
+              </CardTitle>
               <CardDescription>View trends and insights</CardDescription>
             </CardHeader>
             <CardContent>

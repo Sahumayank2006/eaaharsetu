@@ -56,15 +56,17 @@ export function ProductShelfLife({
   };
 
   return (
-    <Card className={className}>
+    <Card className={`border-0 shadow-md ${className}`}>
       <CardHeader>
         <div className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-lg flex items-center">
-              <Clock className="h-5 w-5 mr-2 text-amber-500" />
+            <CardTitle className="text-lg flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
               Product Shelf Life
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="mt-2">
               Predicted remaining lifetime for stored products
             </CardDescription>
           </div>
@@ -72,7 +74,7 @@ export function ProductShelfLife({
           <Select value={filter} onValueChange={(value) => 
             setFilter(value as "all" | "critical" | "high" | "medium" | "low")
           }>
-            <SelectTrigger className="w-[110px]">
+            <SelectTrigger className="w-[110px] rounded-xl border-muted">
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
@@ -97,7 +99,7 @@ export function ProductShelfLife({
       <CardContent>
         {isLoading ? (
           <div className="space-y-4">
-            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full rounded-xl" />
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-24 w-full" />
           </div>
@@ -136,10 +138,10 @@ function ProductShelfLifeCard({ prediction }: ProductShelfLifeCardProps) {
   // Get color based on risk level
   const getRiskColor = (risk: SpoilagePrediction['riskLevel']) => {
     switch (risk) {
-      case 'critical': return 'bg-red-100 border-red-300 text-red-800';
-      case 'high': return 'bg-orange-100 border-orange-300 text-orange-800';
-      case 'medium': return 'bg-yellow-100 border-yellow-300 text-yellow-700';
-      case 'low': return 'bg-green-100 border-green-300 text-green-800';
+      case 'critical': return 'bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-red-200 dark:border-red-800';
+      case 'high': return 'bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20 border-orange-200 dark:border-orange-800';
+      case 'medium': return 'bg-gradient-to-br from-yellow-50 to-yellow-100/50 dark:from-yellow-950/30 dark:to-yellow-900/20 border-yellow-200 dark:border-yellow-800';
+      case 'low': return 'bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200 dark:border-green-800';
     }
   };
   
@@ -156,19 +158,20 @@ function ProductShelfLifeCard({ prediction }: ProductShelfLifeCardProps) {
   const isCloseToExpiry = prediction.currentShelfLife <= 14; // Two weeks or less
   
   return (
-    <div className={`p-3 rounded-md border ${getRiskColor(prediction.riskLevel)}`}>
+    <div className={`p-4 rounded-xl border ${getRiskColor(prediction.riskLevel)} transition-all hover:shadow-sm`}>
       <div className="flex justify-between items-center">
         <div>
-          <div className="font-medium">{prediction.itemName}</div>
-          <div className="text-xs opacity-80">{prediction.category}</div>
+          <div className="font-semibold">{prediction.itemName}</div>
+          <div className="text-xs text-muted-foreground">{prediction.category}</div>
         </div>
         
         <Badge 
-          variant={
-            prediction.riskLevel === 'critical' ? 'destructive' :
-            prediction.riskLevel === 'high' ? 'outline' : 
-            'secondary'
-          }
+          className={`rounded-lg ${
+            prediction.riskLevel === 'critical' ? 'bg-red-500 hover:bg-red-600' :
+            prediction.riskLevel === 'high' ? 'bg-orange-500 hover:bg-orange-600' : 
+            prediction.riskLevel === 'medium' ? 'bg-yellow-500 hover:bg-yellow-600' :
+            'bg-green-500 hover:bg-green-600'
+          }`}
         >
           {prediction.riskLevel}
         </Badge>
@@ -177,24 +180,19 @@ function ProductShelfLifeCard({ prediction }: ProductShelfLifeCardProps) {
       <div className="mt-3">
         <div className="flex justify-between text-xs mb-1">
           <span>Shelf life remaining</span>
-          <span className={isCloseToExpiry ? 'text-red-600 font-medium' : ''}>
+          <span className={isCloseToExpiry ? 'text-red-600 font-semibold' : 'font-medium'}>
             {prediction.currentShelfLife} days
           </span>
         </div>
         
         <Progress 
           value={percentRemaining} 
-          className={
-            prediction.riskLevel === 'critical' ? 'text-red-500' : 
-            prediction.riskLevel === 'high' ? 'text-orange-500' : 
-            prediction.riskLevel === 'medium' ? 'text-yellow-500' : 
-            'text-green-500'
-          }
+          className="h-2"
         />
       </div>
       
       <div className="mt-2 flex justify-between items-center">
-        <div className="text-xs text-left">
+        <div className="text-xs text-muted-foreground">
           <span>Initial: {prediction.originalShelfLife} days</span>
         </div>
         
@@ -202,35 +200,35 @@ function ProductShelfLifeCard({ prediction }: ProductShelfLifeCardProps) {
           variant="ghost" 
           size="sm" 
           onClick={() => setShowDetails(!showDetails)}
-          className="text-xs h-7 px-2"
+          className="text-xs h-7 px-2 rounded-lg"
         >
           {showDetails ? 'Less' : 'More'}
         </Button>
       </div>
       
       {showDetails && (
-        <div className="mt-2 text-xs">
-          <div className="p-2 rounded bg-white bg-opacity-50">
-            <p className="font-medium mb-1">Recommendation:</p>
-            <p>{prediction.recommendation}</p>
+        <div className="mt-3 text-xs">
+          <div className="p-3 rounded-lg bg-background/60">
+            <p className="font-semibold mb-1">Recommendation:</p>
+            <p className="text-muted-foreground">{prediction.recommendation}</p>
             
             {prediction.affectedByTemperature && (
-              <div className="flex items-center mt-2">
-                <AlertTriangle className="h-3 w-3 mr-1 text-amber-500" />
+              <div className="flex items-center mt-2 text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="h-3 w-3 mr-1" />
                 <span>Temperature conditions affecting shelf life</span>
               </div>
             )}
             
             {prediction.affectedByHumidity && (
-              <div className="flex items-center mt-1">
-                <AlertTriangle className="h-3 w-3 mr-1 text-amber-500" />
+              <div className="flex items-center mt-1 text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="h-3 w-3 mr-1" />
                 <span>Humidity conditions affecting shelf life</span>
               </div>
             )}
             
             {prediction.affectedByWeather && (
-              <div className="flex items-center mt-1">
-                <AlertTriangle className="h-3 w-3 mr-1 text-amber-500" />
+              <div className="flex items-center mt-1 text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="h-3 w-3 mr-1" />
                 <span>Weather forecast may further impact shelf life</span>
               </div>
             )}

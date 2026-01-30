@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { Loader2, Sparkles, Map, Pin } from "lucide-react";
+import { Loader2, Sparkles, Map, Pin, MapPin, Navigation } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -77,26 +77,37 @@ export function RouteOptimization() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>AI-Powered Route Optimization</CardTitle>
-        <CardDescription>
-          Enter your start point, delivery locations, and an optional end point to get the most efficient route.
-        </CardDescription>
+    <Card className="w-full border-0 shadow-md">
+      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-white">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-200">
+            <Navigation className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <CardTitle className="text-lg font-semibold">AI-Powered Route Optimization</CardTitle>
+            <CardDescription>
+              Enter your delivery locations to get the most efficient route
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="grid md:grid-cols-2 gap-8">
+      <CardContent className="grid md:grid-cols-2 gap-8 p-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="startLocation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Start Location</FormLabel>
+                  <FormLabel className="text-sm font-semibold">Start Location</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Main Warehouse" {...field} />
+                    <Input 
+                      placeholder="e.g., Main Warehouse" 
+                      className="rounded-xl"
+                      {...field} 
+                    />
                   </FormControl>
-                   <FormMessage />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -105,35 +116,43 @@ export function RouteOptimization() {
               name="deliveryPoints"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Delivery Points</FormLabel>
+                  <FormLabel className="text-sm font-semibold">Delivery Points</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., Customer A&#10;Customer B"
-                      className="min-h-[120px]"
+                      className="min-h-[120px] rounded-xl resize-none"
                       {...field}
                     />
                   </FormControl>
-                   <FormMessage />
-                   <p className="text-xs text-muted-foreground">List each delivery point on a new line.</p>
+                  <FormMessage />
+                  <p className="text-xs text-muted-foreground">List each delivery point on a new line.</p>
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="endLocation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>End Location (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-semibold">End Location (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Return to Warehouse" {...field} />
+                    <Input 
+                      placeholder="e.g., Return to Warehouse" 
+                      className="rounded-xl"
+                      {...field} 
+                    />
                   </FormControl>
-                   <FormMessage />
-                   <p className="text-xs text-muted-foreground">Leave blank to return to the start location.</p>
+                  <FormMessage />
+                  <p className="text-xs text-muted-foreground">Leave blank to return to the start location.</p>
                 </FormItem>
               )}
             />
             
-            <Button type="submit" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full rounded-xl shadow-lg shadow-primary/20 h-11"
+            >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -143,41 +162,56 @@ export function RouteOptimization() {
             </Button>
           </form>
         </Form>
+        
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Optimized Route Plan</h3>
-            {isLoading && (
-                <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
-                    <p className="text-muted-foreground">AI is calculating the best route...</p>
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Map className="h-5 w-5 text-primary" />
+            Optimized Route Plan
+          </h3>
+          {isLoading && (
+            <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-2xl bg-muted/30">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent mb-4" />
+              <p className="text-muted-foreground font-medium">AI is calculating the best route...</p>
+            </div>
+          )}
+          {optimizedRoute && (
+            <Card className="bg-gradient-to-br from-muted/50 to-muted/20 border-0 shadow-inner max-h-[500px] overflow-y-auto">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Route Summary</CardTitle>
+                <div className="flex gap-4 mt-2">
+                  <div className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    {optimizedRoute.totalDistance}
+                  </div>
+                  <div className="px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                    {optimizedRoute.estimatedTime}
+                  </div>
                 </div>
-            )}
-            {optimizedRoute && (
-                <Card className="bg-muted/50 max-h-[500px] overflow-y-auto">
-                    <CardHeader>
-                        <CardTitle className="text-base">Route Summary</CardTitle>
-                        <CardDescription>
-                            Total Distance: {optimizedRoute.totalDistance} | Estimated Time: {optimizedRoute.estimatedTime}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-6 space-y-4">
-                        <ol className="relative border-l border-gray-400 dark:border-gray-700">
-                        {optimizedRoute.optimizedRoute.map((stop, index) => (
-                            <li key={index} className="mb-6 ml-6">
-                                <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                                    <Pin className="w-3 h-3 text-blue-800 dark:text-blue-300" />
-                                </span>
-                                <h4 className="font-semibold">{stop.location}</h4>
-                                <p className="text-sm text-muted-foreground">{stop.instructions}</p>
-                            </li>
-                        ))}
-                        </ol>
-                    </CardContent>
-                </Card>
-            )}
-            {!isLoading && !optimizedRoute && (
-                <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
-                    <p className="text-muted-foreground">Your optimized route will appear here.</p>
-                </div>
-            )}
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <ol className="relative border-l-2 border-primary/30 ml-3">
+                  {optimizedRoute.optimizedRoute.map((stop, index) => (
+                    <li key={index} className="mb-6 ml-6">
+                      <span className="absolute flex items-center justify-center w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-full -left-4 ring-4 ring-white shadow-lg">
+                        <span className="text-xs font-bold text-white">{index + 1}</span>
+                      </span>
+                      <div className="p-3 rounded-xl bg-white shadow-sm">
+                        <h4 className="font-semibold text-sm">{stop.location}</h4>
+                        <p className="text-xs text-muted-foreground mt-1">{stop.instructions}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </CardContent>
+            </Card>
+          )}
+          {!isLoading && !optimizedRoute && (
+            <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-2xl bg-muted/20">
+              <div className="p-4 rounded-full bg-muted mb-3">
+                <MapPin className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground font-medium">Your optimized route will appear here</p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

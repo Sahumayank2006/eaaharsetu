@@ -96,20 +96,23 @@ const salesHistory = [
 
 function BrowseBids() {
   return (
-    <Card>
+    <Card className="border-0 shadow-md">
       <CardHeader>
-        <CardTitle>Browse Dealer Bids</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Store className="h-5 w-5 text-primary" />
+          Browse Dealer Bids
+        </CardTitle>
         <CardDescription>
           View current bids from dealers for crops you might be selling.
         </CardDescription>
         <div className="mt-4 flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search by crop name..." className="pl-10" />
+                <Input placeholder="Search by crop name..." className="pl-10 rounded-xl border-muted" />
             </div>
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full md:w-auto">
+                <Button variant="outline" className="w-full md:w-auto rounded-xl">
                     <SlidersHorizontal className="mr-2 h-4 w-4" />
                     Filter Bids
                     <ChevronDown className="ml-2 h-4 w-4" />
@@ -125,38 +128,38 @@ function BrowseBids() {
       </CardHeader>
       <CardContent className="space-y-4">
         {dealerBids.map((bid) => (
-          <Card key={bid.id} className="flex flex-col sm:flex-row items-start gap-4 p-4">
+          <Card key={bid.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border-0 shadow-sm bg-muted/30 hover:bg-muted/50 transition-colors rounded-xl">
             <Image
               src={bid.dealerImage}
               alt={bid.dealerName}
               width={80}
               height={80}
-              className="rounded-full border-2 border-primary/50 aspect-square object-cover"
+              className="rounded-xl border-2 border-primary/30 aspect-square object-cover shadow-md"
               data-ai-hint={bid.dataAiHint}
             />
             <div className="flex-1">
               <h3 className="font-semibold text-lg">{bid.dealerName}</h3>
               <p className="text-muted-foreground text-sm">Location: {bid.location}</p>
-              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-                <div>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                <div className="p-2 rounded-lg bg-background">
                     <p className="text-xs text-muted-foreground">Crop</p>
                     <p className="font-medium">{bid.crop}</p>
                 </div>
-                 <div>
+                 <div className="p-2 rounded-lg bg-background">
                     <p className="text-xs text-muted-foreground">Quantity</p>
                     <p className="font-medium">{bid.quantity} kg</p>
                 </div>
-                 <div>
+                 <div className="p-2 rounded-lg bg-background">
                     <p className="text-xs text-muted-foreground">Offer Price</p>
                     <p className="font-medium text-primary">₹{bid.offerPrice}/quintal</p>
                 </div>
               </div>
             </div>
             <div className="flex sm:flex-col gap-2 mt-2 sm:mt-0 w-full sm:w-auto">
-                <Button size="sm" className="w-full">
+                <Button size="sm" className="w-full rounded-xl shadow-md shadow-primary/20">
                     <Check className="mr-2 h-4 w-4" /> Accept
                 </Button>
-                 <Button size="sm" variant="outline" className="w-full">
+                 <Button size="sm" variant="outline" className="w-full rounded-xl">
                     <Gavel className="mr-2 h-4 w-4" /> Counter Bid
                 </Button>
             </div>
@@ -169,13 +172,16 @@ function BrowseBids() {
 
 function ManageListings() {
     return (
-        <Card>
+        <Card className="border-0 shadow-md">
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle>Manage Your Listings</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <List className="h-5 w-5 text-primary" />
+                      Manage Your Listings
+                    </CardTitle>
                     <CardDescription>View, edit, or remove your active crop listings.</CardDescription>
                 </div>
-                <Button asChild>
+                <Button asChild className="rounded-xl shadow-md shadow-primary/20">
                     <Link href="/dashboard/crop-management?role=farmer">
                         <PlusCircle className="mr-2 h-4 w-4"/>
                         New Listing
@@ -183,9 +189,10 @@ function ManageListings() {
                 </Button>
             </CardHeader>
             <CardContent>
+                <div className="rounded-xl border border-muted overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="bg-muted/50">
                             <TableHead>Crop</TableHead>
                             <TableHead>Quantity</TableHead>
                             <TableHead>Asking Price</TableHead>
@@ -196,22 +203,22 @@ function ManageListings() {
                     </TableHeader>
                     <TableBody>
                         {myListings.map((listing) => (
-                            <TableRow key={listing.id}>
+                            <TableRow key={listing.id} className="hover:bg-muted/30 transition-colors">
                                 <TableCell className="font-medium">{listing.crop}</TableCell>
                                 <TableCell>{listing.quantity} kg</TableCell>
-                                <TableCell>₹{listing.price}/quintal</TableCell>
+                                <TableCell className="font-medium">₹{listing.price}/quintal</TableCell>
                                 <TableCell>
-                                    <Badge variant="secondary">{listing.bids} new bids</Badge>
+                                    <Badge variant="secondary" className="rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400">{listing.bids} new bids</Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant={listing.status === 'active' ? 'default' : 'outline'} className={listing.status === 'active' ? 'bg-green-600' : ''}>
+                                    <Badge className={`rounded-lg ${listing.status === 'active' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-muted text-muted-foreground'}`}>
                                         {listing.status}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
+                                            <Button variant="ghost" size="icon" className="rounded-lg">
                                                 <ChevronDown />
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -226,6 +233,7 @@ function ManageListings() {
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </CardContent>
         </Card>
     )
@@ -233,15 +241,19 @@ function ManageListings() {
 
 function SalesHistory() {
      return (
-        <Card>
+        <Card className="border-0 shadow-md">
             <CardHeader>
-                <CardTitle>Sales History</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5 text-primary" />
+                  Sales History
+                </CardTitle>
                 <CardDescription>A record of all your completed and pending transactions.</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="rounded-xl border border-muted overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="bg-muted/50">
                             <TableHead>Crop</TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Dealer</TableHead>
@@ -251,25 +263,23 @@ function SalesHistory() {
                     </TableHeader>
                     <TableBody>
                         {salesHistory.map((sale) => (
-                            <TableRow key={sale.id}>
+                            <TableRow key={sale.id} className="hover:bg-muted/30 transition-colors">
                                 <TableCell className="font-medium">{sale.crop}</TableCell>
                                 <TableCell>{sale.date}</TableCell>
                                 <TableCell>{sale.dealer}</TableCell>
-                                <TableCell>₹{(sale.quantity * sale.price).toLocaleString()}</TableCell>
+                                <TableCell className="font-medium text-emerald-600">₹{(sale.quantity * sale.price).toLocaleString()}</TableCell>
                                 <TableCell>
-                                    <Badge variant={
-                                        sale.status === 'Completed' ? 'default' : 
-                                        sale.status === 'Paid' ? 'default' : 
-                                        'secondary'
-                                    } className={
-                                        sale.status === 'Completed' ? 'bg-green-600' : 
-                                        sale.status === 'Paid' ? 'bg-blue-600' : ''
-                                    }>{sale.status}</Badge>
+                                    <Badge className={`rounded-lg ${
+                                        sale.status === 'Completed' ? 'bg-emerald-500 hover:bg-emerald-600' : 
+                                        sale.status === 'Paid' ? 'bg-blue-500 hover:bg-blue-600' : 
+                                        'bg-amber-500 hover:bg-amber-600'
+                                    }`}>{sale.status}</Badge>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </CardContent>
         </Card>
      )
@@ -278,30 +288,45 @@ function SalesHistory() {
 
 export function MarketParticipationTabs() {
   return (
-    <Tabs defaultValue="browse-bids" className="w-full">
-      <TabsList className="grid w-full grid-cols-1 md:grid-cols-3">
-        <TabsTrigger value="browse-bids">
-          <Store className="mr-2 h-4 w-4" />
-          Browse Bids
-        </TabsTrigger>
-        <TabsTrigger value="manage-listings">
-          <List className="mr-2 h-4 w-4" />
-          Manage Your Listings
-        </TabsTrigger>
-        <TabsTrigger value="sales-history">
-          <History className="mr-2 h-4 w-4" />
-          Sales History
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="browse-bids">
-        <BrowseBids />
-      </TabsContent>
-      <TabsContent value="manage-listings">
-        <ManageListings />
-      </TabsContent>
-      <TabsContent value="sales-history">
-        <SalesHistory />
-      </TabsContent>
-    </Tabs>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Market Participation</h2>
+          <p className="text-muted-foreground">
+            Browse bids, manage listings, and track your sales
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600/80 shadow-lg shadow-emerald-500/20">
+          <Store className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
+      <Tabs defaultValue="browse-bids" className="w-full">
+        <TabsList className="bg-muted/50 p-1 rounded-xl w-full grid grid-cols-1 md:grid-cols-3">
+          <TabsTrigger value="browse-bids" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Store className="mr-2 h-4 w-4" />
+            Browse Bids
+          </TabsTrigger>
+          <TabsTrigger value="manage-listings" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <List className="mr-2 h-4 w-4" />
+            Manage Your Listings
+          </TabsTrigger>
+          <TabsTrigger value="sales-history" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <History className="mr-2 h-4 w-4" />
+            Sales History
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="browse-bids">
+          <BrowseBids />
+        </TabsContent>
+        <TabsContent value="manage-listings">
+          <ManageListings />
+        </TabsContent>
+        <TabsContent value="sales-history">
+          <SalesHistory />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

@@ -74,6 +74,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample admin profile data
 const adminProfile = {
@@ -127,10 +128,15 @@ export function ProfileManagement() {
     security: true,
     updates: true
   });
+  const { toast } = useToast();
 
   const handleSaveProfile = () => {
     // In a real app, this would save to backend
     setIsEditing(false);
+    toast({
+      title: "Profile Saved",
+      description: "Your profile changes have been saved successfully.",
+    });
   };
 
   const handleCancelEdit = () => {
@@ -143,7 +149,39 @@ export function ProfileManagement() {
     if (file) {
       // In a real app, this would upload to server
       console.log("Upload avatar:", file.name);
+      toast({
+        title: "Avatar Uploaded",
+        description: `${file.name} has been uploaded.`,
+      });
     }
+  };
+
+  const handleRevokeSession = (device: string) => {
+    toast({
+      title: "Session Revoked",
+      description: `The session on ${device} has been terminated.`,
+    });
+  };
+
+  const handleUpdatePassword = () => {
+    toast({
+      title: "Password Updated",
+      description: "Your password has been changed successfully.",
+    });
+  };
+
+  const handleDownloadData = () => {
+    toast({
+      title: "Download Started",
+      description: "Your data export is being prepared. You will receive an email when ready.",
+    });
+  };
+
+  const handleViewActivityLog = () => {
+    toast({
+      title: "Activity Log",
+      description: "Opening full activity log...",
+    });
   };
 
   const getActivityIcon = (type: string) => {
@@ -159,22 +197,35 @@ export function ProfileManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Profile Settings</h2>
+          <p className="text-muted-foreground">
+            Manage your account settings and preferences
+          </p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+          <User className="h-5 w-5 text-white" />
+        </div>
+      </div>
+
       {/* Profile Header */}
-      <Card>
+      <Card className="border-0 shadow-md">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex flex-col items-center">
               <div className="relative">
-                <Avatar className="w-24 h-24">
+                <Avatar className="w-24 h-24 ring-4 ring-primary/10 shadow-lg">
                   <AvatarImage src={profile.avatar} alt={profile.name} />
-                  <AvatarFallback className="text-2xl">
+                  <AvatarFallback className="text-2xl bg-gradient-to-br from-primary to-primary/80 text-white">
                     {profile.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
                 <Button 
                   size="sm" 
-                  className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
+                  className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0 shadow-lg shadow-primary/20"
                   onClick={() => document.getElementById('avatar-upload')?.click()}
                 >
                   <Camera className="h-4 w-4" />
@@ -410,7 +461,7 @@ export function ProfileManagement() {
                     placeholder="Confirm new password"
                   />
                 </div>
-                <Button>
+                <Button onClick={handleUpdatePassword}>
                   <Key className="h-4 w-4 mr-2" />
                   Update Password
                 </Button>
@@ -459,7 +510,7 @@ export function ProfileManagement() {
                     <p className="font-medium">iPhone - Safari</p>
                     <p className="text-sm text-muted-foreground">2 hours ago • Gwalior, India</p>
                   </div>
-                  <Button variant="outline" size="sm">Revoke</Button>
+                  <Button variant="outline" size="sm" onClick={() => handleRevokeSession('iPhone - Safari')}>Revoke</Button>
                 </div>
               </div>
             </CardContent>
@@ -555,7 +606,7 @@ export function ProfileManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={handleDownloadData}>
                 <Download className="h-4 w-4 mr-2" />
                 Download My Data
               </Button>
@@ -634,7 +685,7 @@ export function ProfileManagement() {
                   </div>
                 ))}
               </div>
-              <Button variant="outline" className="w-full mt-4">
+              <Button variant="outline" className="w-full mt-4" onClick={handleViewActivityLog}>
                 View Full Activity Log
               </Button>
             </CardContent>

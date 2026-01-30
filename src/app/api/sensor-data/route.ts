@@ -66,15 +66,21 @@ export async function GET(request: Request) {
           ]);
 
           // Format for chart (combine and sort by time)
-          const chartData = tempData.map(tempPoint => {
+          // Sort by timestamp ascending (oldest first) for left-to-right display
+          const sortedTempData = tempData.sort((a, b) => 
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
+
+          const chartData = sortedTempData.map(tempPoint => {
             const humPoint = humData.find(h => h.timestamp === tempPoint.timestamp);
             return {
               time: new Date(tempPoint.timestamp).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit'
               }),
-              temperature: tempPoint.value,
-              humidity: humPoint ? humPoint.value : null
+              timestamp: tempPoint.timestamp, // Keep full timestamp for debugging
+              temperature: Number.isFinite(tempPoint.value) ? tempPoint.value : null,
+              humidity: humPoint && Number.isFinite(humPoint.value) ? humPoint.value : null
             };
           });
 
