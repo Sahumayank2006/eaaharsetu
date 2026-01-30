@@ -83,9 +83,9 @@ function PerformerCard({ name, roleKey, location, value, unitKey, avatarUrl }: P
   return (
     <Card className="relative group bg-sky-100/50 dark:bg-900/30 rounded-2xl border-2 border-transparent hover:border-blue-300 transition-all duration-300 flex flex-col items-center p-6 text-center h-full overflow-hidden">
         <Image src="https://i.ibb.co/JwHdxbZ6/Generated-Image-September-10-2025-7-55-PM.png" alt="eAaharSetu mini logo" width={80} height={32} className="mb-4" />
-        <Avatar className="h-20 w-20 border-4 border-white dark:border-blue-900/50 ring-2 ring-blue-200 dark:ring-blue-700 mb-3">
-          <AvatarImage src={avatarUrl} alt={name} />
-          <AvatarFallback className="bg-blue-200 text-blue-800 font-medium text-lg">{name.charAt(0)}</AvatarFallback>
+        <Avatar className="h-32 w-32 border-4 border-white dark:border-blue-900/50 ring-2 ring-blue-200 dark:ring-blue-700 mb-3">
+          <AvatarImage src={avatarUrl} alt={name} className="object-cover" />
+          <AvatarFallback className="bg-blue-200 text-blue-800 font-medium text-2xl">{name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="font-bold text-lg text-blue-900 dark:text-blue-100">{name}</div>
         <div className="text-sm text-blue-800 dark:text-blue-200 font-light">{t(roleKey, roleKey.replace(/_/g, ' '))}</div>
@@ -141,7 +141,7 @@ export default function RoleSelectionPage() {
       location: "Maharashtra Region",
       value: "1.2",
       unitKey: "tons",
-      avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=VK"
+      avatarUrl: "https://i.ibb.co/5WM3K1tb/Chat-GPT-Image-Jan-30-2026-10-24-34-AM.png"
     },
     {
       name: "Meera Patel", 
@@ -149,7 +149,7 @@ export default function RoleSelectionPage() {
       location: "Nashik Cold Storage",
       value: "800",
       unitKey: "kg",
-      avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=MP"
+      avatarUrl: "https://i.ibb.co/N2q3PK1S/Chat-GPT-Image-Jan-30-2026-10-28-34-AM.png"
     },
     {
       name: "Rohan Gupta",
@@ -157,7 +157,7 @@ export default function RoleSelectionPage() {
       location: "Pune District",
       value: "1.5",
       unitKey: "tons",
-      avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=RG"
+      avatarUrl: "https://i.ibb.co/8gGfF6Bg/Chat-GPT-Image-Jan-30-2026-10-29-28-AM.png"
     },
     {
       name: "Aisha Sharma",
@@ -165,7 +165,7 @@ export default function RoleSelectionPage() {
       location: "Nagpur Hub", 
       value: "750",
       unitKey: "kg",
-      avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=AS"
+      avatarUrl: "https://i.ibb.co/N2q3PK1S/Chat-GPT-Image-Jan-30-2026-10-28-34-AM.png"
     },
     {
       name: "Suresh Singh",
@@ -173,7 +173,7 @@ export default function RoleSelectionPage() {
       location: "Aurangabad",
       value: "2.1",
       unitKey: "tons",
-      avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=SS"
+      avatarUrl: "https://i.ibb.co/5WM3K1tb/Chat-GPT-Image-Jan-30-2026-10-24-34-AM.png"
     },
     {
         name: "Priya Rao",
@@ -181,7 +181,7 @@ export default function RoleSelectionPage() {
         location: "Satara", 
         value: "900",
         unitKey: "kg",
-        avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=PR"
+        avatarUrl: "https://i.ibb.co/N2q3PK1S/Chat-GPT-Image-Jan-30-2026-10-28-34-AM.png"
     },
     {
         name: "Amit Deshmukh",
@@ -189,7 +189,7 @@ export default function RoleSelectionPage() {
         location: "Mumbai Port",
         value: "600",
         unitKey: "kg",
-        avatarUrl: "https://placehold.co/150x150/22c55e/ffffff?text=AD"
+        avatarUrl: "https://i.ibb.co/8gGfF6Bg/Chat-GPT-Image-Jan-30-2026-10-29-28-AM.png"
     }
   ];
 
@@ -198,28 +198,28 @@ export default function RoleSelectionPage() {
       titleKey: "farmer_handbook",
       year: "2024",
       size: "1.2 MB",
-      imageUrl: "https://placehold.co/300x400/2563eb/ffffff?text=PDF",
+      imageUrl: "https://i.ibb.co/4n3wFvDb/Chat-GPT-Image-Jan-30-2026-10-16-17-AM.png",
       downloadUrl: "/docs/farmer-handbook.pdf"
     },
     { 
       titleKey: "dealer_manual",
       year: "2024",
       size: "850 KB",
-      imageUrl: "https://placehold.co/300x400/2563eb/ffffff?text=PDF",
+      imageUrl: "https://i.ibb.co/0jN4VfTB/Chat-GPT-Image-Jan-30-2026-10-18-40-AM.png",
       downloadUrl: "/docs/dealer-manual.pdf"
     },
     { 
       titleKey: "warehouse_practices",
       year: "2024",
       size: "1.5 MB",
-      imageUrl: "https://placehold.co/300x400/2563eb/ffffff?text=PDF",
+      imageUrl: "https://i.ibb.co/bM0RXDwd/Chat-GPT-Image-Jan-30-2026-10-20-47-AM.png",
       downloadUrl: "/docs/warehouse-practices.pdf"
     },
     { 
       titleKey: "platform_policy",
       year: "2024",
       size: "450 KB",
-      imageUrl: "https://placehold.co/300x400/2563eb/ffffff?text=PDF",
+      imageUrl: "https://i.ibb.co/GvBfvv45/Chat-GPT-Image-Jan-30-2026-10-21-34-AM.png",
       downloadUrl: "/docs/platform-policy.pdf"
     },
   ];

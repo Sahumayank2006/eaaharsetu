@@ -102,7 +102,7 @@ export default function BookSlotPage() {
         status: "Upcoming",
         farmerId,
         farmerName,
-        farmerAvatar: "https://i.ibb.co/QvRcVK86/Copilot-20250915-232755.png"
+        farmerAvatar: "https://i.ibb.co/8gGfF6Bg/Chat-GPT-Image-Jan-30-2026-10-29-28-AM.png"
       });
       
       await addDoc(collection(db, "notifications"), {
