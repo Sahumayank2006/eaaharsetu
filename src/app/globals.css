@@ -1,0 +1,314 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+@layer base {
+  :root {
+    --background: 220 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 60% 95%;
+    --secondary-foreground: 160 84% 30%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 160 84% 39%;
+    --radius: 0.75rem;
+    
+    /* Chart colors - vibrant but harmonious */
+    --chart-1: 160 84% 39%;
+    --chart-2: 199 89% 48%;
+    --chart-3: 43 96% 56%;
+    --chart-4: 280 67% 60%;
+    --chart-5: 20 90% 60%;
+    
+    /* Sidebar - clean slate theme */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 60% 96%;
+    --sidebar-accent-foreground: 160 84% 25%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 160 84% 39%;
+    
+    /* Header - brand orange */
+    --header-background: 25 95% 53%;
+    --header-foreground: 0 0% 100%;
+
+    --carousel-item-opacity: 0.3;
+    --carousel-item-scale: 0.9;
+  }
+  
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 160 84% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 30% 15%;
+    --secondary-foreground: 160 60% 80%;
+    --muted: 222 47% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 222 47% 14%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 47% 18%;
+    --input: 222 47% 18%;
+    --ring: 160 84% 45%;
+    
+    --chart-1: 160 84% 45%;
+    --chart-2: 199 89% 55%;
+    --chart-3: 43 96% 60%;
+    --chart-4: 280 67% 65%;
+    --chart-5: 20 90% 65%;
+    
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 160 84% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 47% 14%;
+    --sidebar-accent-foreground: 160 60% 80%;
+    --sidebar-border: 222 47% 18%;
+    --sidebar-ring: 160 84% 45%;
+    
+    --header-background: 25 95% 50%;
+    --header-foreground: 0 0% 100%;
+
+    --carousel-item-opacity: 0.3;
+    --carousel-item-scale: 0.9;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+  }
+  
+  /* Inter font utilities */
+  .font-inter-light {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+  }
+  
+  .font-inter-medium {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  /* Regional language fonts */
+  .font-hindi-light,
+  .font-marathi-light {
+    font-family: 'Hind', sans-serif;
+    font-weight: 300;
+  }
+  
+  .font-hindi-medium,
+  .font-marathi-medium {
+    font-family: 'Hind', sans-serif;
+    font-weight: 500;
+  }
+
+  .font-bengali-light {
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: 400;
+  }
+  
+  .font-bengali-medium {
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: 600;
+  }
+
+  .font-telugu-light {
+    font-family: 'Hind Guntur', sans-serif;
+    font-weight: 300;
+  }
+  
+  .font-telugu-medium {
+    font-family: 'Hind Guntur', sans-serif;
+    font-weight: 500;
+  }
+
+  .font-tamil-light {
+    font-family: 'Hind Madurai', sans-serif;
+    font-weight: 300;
+  }
+  
+  .font-tamil-medium {
+    font-family: 'Hind Madurai', sans-serif;
+    font-weight: 500;
+  }
+
+  /* Language-specific body font classes */
+  .lang-en {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+  }
+  
+  .lang-hi,
+  .lang-mr {
+    font-family: 'Hind', sans-serif;
+    font-weight: 300;
+  }
+
+  .lang-bn {
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: 400;
+  }
+
+  .lang-te {
+    font-family: 'Hind Guntur', sans-serif;
+    font-weight: 300;
+  }
+
+  .lang-ta {
+    font-family: 'Hind Madurai', sans-serif;
+    font-weight: 300;
+  }
+
+  /* Heading styles for different languages */
+  .lang-en h1, .lang-en h2, .lang-en h3, .lang-en h4, .lang-en h5, .lang-en h6 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  .lang-hi h1, .lang-hi h2, .lang-hi h3, .lang-hi h4, .lang-hi h5, .lang-hi h6,
+  .lang-mr h1, .lang-mr h2, .lang-mr h3, .lang-mr h4, .lang-mr h5, .lang-mr h6 {
+    font-family: 'Hind', sans-serif;
+    font-weight: 500;
+  }
+
+  .lang-bn h1, .lang-bn h2, .lang-bn h3, .lang-bn h4, .lang-bn h5, .lang-bn h6 {
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: 600;
+  }
+
+  .lang-te h1, .lang-te h2, .lang-te h3, .lang-te h4, .lang-te h5, .lang-te h6 {
+    font-family: 'Hind Guntur', sans-serif;
+    font-weight: 500;
+  }
+
+  .lang-ta h1, .lang-ta h2, .lang-ta h3, .lang-ta h4, .lang-ta h5, .lang-ta h6 {
+    font-family: 'Hind Madurai', sans-serif;
+    font-weight: 500;
+  }
+}
+
+@layer utilities {
+  .carousel-item.is-active {
+    --carousel-item-opacity: 1;
+    --carousel-item-scale: 1;
+  }
+
+  /* Rotating rim animation with head and tail */
+  .rim-animation {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rim-animation::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      transparent 60deg,
+      var(--rim-color, #ef4444) 90deg,
+      var(--rim-color, #ef4444) 120deg,
+      transparent 180deg,
+      transparent 360deg
+    );
+    animation: rim-spin 2s linear infinite;
+    z-index: -1;
+  }
+
+  .rim-animation-red {
+    --rim-color: #ef4444;
+  }
+
+  .rim-animation-amber {
+    --rim-color: #f59e0b;
+  }
+
+  .rim-animation-blue {
+    --rim-color: #3b82f6;
+  }
+
+  @keyframes rim-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .wavy-border {
+    position: relative;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .wavy-border::before,
+  .wavy-border::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 15px;
+    background-size: 100% 20px;
+  }
+  
+  .wavy-border::before {
+    left: 0;
+    background-image: 
+        radial-gradient(circle at 100% 10px, transparent 10px, #FF9933 10px, #FF9933 11px, transparent 11px),
+        radial-gradient(circle at 100% 10px, transparent 10px, #FFFFFF 10px, #FFFFFF 11px, transparent 11px),
+        radial-gradient(circle at 100% 10px, transparent 10px, #138808 10px, #138808 11px, transparent 11px);
+    background-image: 
+        radial-gradient(circle at 100% 10px, transparent 8px, #FF9933 8px, #FF9933 10px, transparent 10px),
+        radial-gradient(circle at 0% 10px, #FF9933 8px, transparent 8px);
+    background-position: left;
+    background-repeat: repeat-y;
+  }
+
+  .wavy-border::after {
+    right: 0;
+    background-image: 
+        radial-gradient(circle at 0% 10px, transparent 8px, #138808 8px, #138808 10px, transparent 10px),
+        radial-gradient(circle at 100% 10px, #138808 8px, transparent 8px);
+    background-position: right;
+    background-repeat: repeat-y;
+  }
+}
+
+    
