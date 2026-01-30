@@ -5,7 +5,7 @@ import type { SensorStats } from '@/lib/sensor-data';
 interface ChartDataPoint {
   time: string;
   temperature: number;
-  humidity: number;
+  humidity: number | null;
 }
 
 interface UseWarehouseSensorDataReturn {

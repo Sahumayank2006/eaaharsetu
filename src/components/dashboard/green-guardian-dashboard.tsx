@@ -28,6 +28,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Responsi
 import { useSensorData } from "@/hooks/use-sensor-data";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import AdafruitGauges from "./adafruit-gauges";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from "@/hooks/use-language-font";
 
@@ -55,7 +56,7 @@ const sensorChartConfig = {
 export default function GreenGuardianDashboard() {
   const { t } = useTranslation();
   // Fetch real sensor data with 30-second refresh interval
-  const { stats, chartData, isLoading, error, refetch } = useSensorData(30000);
+  const { stats, chartData, isLoading, error, refetch, source } = useSensorData(30000);
   const searchParams = useSearchParams();
   const role = searchParams.get("role") || "green-guardian";
   const lang = searchParams.get("lang") || "en";
@@ -65,8 +66,23 @@ export default function GreenGuardianDashboard() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState<string | null>(null);
   const [iframeKey, setIframeKey] = useState(0); // force reload on retry
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Use Adafruit IO dashboard instead of Node-RED
+  const adafruitDashboardUrl = process.env.NEXT_PUBLIC_ADAFRUIT_DASHBOARD_URL || "https://io.adafruit.com/sillypari/dashboards/pinto-park-live";
+
+  // For backward compatibility, keep Node-RED URL but prioritize Adafruit IO
   const rawNodeRedUrl = process.env.NEXT_PUBLIC_NODERED_URL || "http://127.0.0.1:1880/ui";
-  // Normalize URL: ensure /ui path and prefer landing route with hash
+
+  // Use Adafruit IO dashboard as the primary iframe source
+  const iframeUrl = useMemo(() => {
+    return adafruitDashboardUrl;
+  }, [adafruitDashboardUrl]);
+
+  // Keep Node-RED URL logic for fallback or comparison
   const nodeRedUrl = useMemo(() => {
     const base = rawNodeRedUrl.replace(/\/$/, "");
     // If a hash route is already present, keep it as-is
@@ -87,57 +103,132 @@ export default function GreenGuardianDashboard() {
     }
     return finalUrl;
   }, [rawNodeRedUrl]);
-  const [isReachable, setIsReachable] = useState<boolean | null>(null);
+  // Removed iframe reachability check since we're using direct links now
+  // const [isReachable, setIsReachable] = useState<boolean | null>(null);
 
+  // Live IoT iframe effects
   useEffect(() => {
     let cancelled = false;
-    setIsReachable(null);
     setIframeError(null);
-    // Proactively check reachability (CORS-friendly; Node-RED typically sets ACAO:*)
+    // Proactively check reachability for Adafruit IO dashboard
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
     const headers: HeadersInit = {};
-    
-    // Add ngrok header if using ngrok URL to skip browser warning
-    if (nodeRedUrl.includes('ngrok')) {
-      headers['ngrok-skip-browser-warning'] = 'true';
-    }
-    
-    fetch(nodeRedUrl.replace(/#.*$/, ""), { 
+
+    // Adafruit IO doesn't require special headers like ngrok
+    fetch(iframeUrl.replace(/#.*/, ""), {
       signal: controller.signal,
-      headers 
+      headers
     })
       .then(() => {
-        if (!cancelled) setIsReachable(true);
+        if (!cancelled) setIframeLoaded(true);
       })
       .catch(() => {
-        if (!cancelled) setIsReachable(false);
+        if (!cancelled) {
+          setIframeError('Failed to load Adafruit IO dashboard. The site may not allow embedding.');
+        }
       })
       .finally(() => clearTimeout(timer));
-
-    // After 15s, if not loaded and unreachable, show error
-    const errorTimer = setTimeout(() => {
-      if (!cancelled && !iframeLoaded && isReachable === false) {
-        const isLocalUrl = nodeRedUrl.includes('127.0.0.1') || nodeRedUrl.includes('localhost');
-        const errorMsg = isLocalUrl 
-          ? `Node-RED dashboard not accessible at ${nodeRedUrl}. For production deployment, you need to:
-             1. Deploy Node-RED to a cloud service (FlowFuse, Heroku, etc.)
-             2. Set NEXT_PUBLIC_NODERED_URL environment variable in Vercel to your public Node-RED URL
-             3. Or use ngrok for testing: 'ngrok http 1880'`
-          : `Can't reach Node-RED dashboard at ${nodeRedUrl}. Please check if the URL is accessible.`;
-        setIframeError(errorMsg);
-      }
-    }, 15000);
 
     return () => {
       cancelled = true;
       clearTimeout(timer);
-      clearTimeout(errorTimer);
       controller.abort();
     };
-  }, [nodeRedUrl, iframeLoaded, iframeKey]);
+  }, [iframeUrl, iframeKey]);
 
-  // Render small circles only for last 3 updates to reduce clutter
+  // Auto-refresh effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (autoRefreshEnabled) {
+      interval = setInterval(() => {
+        setIframeKey(prev => prev + 1);
+        setLastUpdated(new Date());
+      }, 60000); // 60 seconds
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [autoRefreshEnabled]);
+
+  // Update timestamp every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastUpdated(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // F5 or Ctrl+R: Refresh
+      if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+        e.preventDefault();
+        refreshDashboard();
+      }
+
+      // F11: Fullscreen
+      if (e.key === 'F11') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+
+      // Escape: Exit fullscreen
+      if (e.key === 'Escape' && isFullscreen) {
+        toggleFullscreen();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  // Refresh dashboard function
+  const refreshDashboard = () => {
+    setIsRefreshing(true);
+    setIframeError(null);
+    setIframeLoaded(false);
+    setIframeKey(prev => prev + 1);
+    setLastUpdated(new Date());
+
+    // Reset refreshing state after 2 seconds
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 2000);
+  };
+
+  // Toggle auto-refresh
+  const toggleAutoRefresh = () => {
+    setAutoRefreshEnabled(prev => !prev);
+  };
+
+  // Toggle fullscreen
+  const toggleFullscreen = () => {
+    setIsFullscreen(prev => !prev);
+  };
+
+  // Open dashboard in a new tab
+  const openInNewTab = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.open(iframeUrl, '_blank', 'noopener,noreferrer');
+      } catch (e) {
+        // fallback
+        window.location.href = iframeUrl;
+      }
+    }
+  };
+
+  // Format timestamp for display
+  const formatTimestamp = (date: Date) => {
+    return date.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
   const tailDot = (dataLen: number, cssVarColor: string) => (props: any) => {
     const { index, cx, cy } = props;
     const isTail = typeof index === 'number' && index >= Math.max(0, dataLen - 3);
@@ -322,6 +413,9 @@ export default function GreenGuardianDashboard() {
                 <CardTitle className="text-lg font-semibold text-gray-900">{t('sensor_dashboard_title', 'Real-time Sensor Dashboard')}</CardTitle>
                 <CardDescription className="text-sm text-gray-600">
                   {t('sensor_dashboard_desc', 'Temperature and humidity over last 12 hours from IoT sensors')}
+                  <span className="block mt-1 text-xs text-blue-600 font-medium">
+                    📡 {t('data_source', 'Data Source')}: {source === 'adafruit-io' ? 'Adafruit IO Cloud' : 'CSV Fallback'}
+                  </span>
                 </CardDescription>
               </div>
               <Button variant="outline" size="sm" onClick={refetch} disabled={isLoading}>
@@ -445,60 +539,163 @@ export default function GreenGuardianDashboard() {
 
         {/* Right Column */}
         <div className="space-y-6">
-          {/* 2. Live IoT Dashboard */}
-          <Card className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-              <div className="space-y-1">
-                <CardTitle className="text-lg font-semibold text-gray-900">{t('live_iot_dashboard', 'Live IoT Dashboard')}</CardTitle>
-                <CardDescription className="text-sm text-gray-600">
-                  {t('live_iot_desc', 'Real-time Node-RED dashboard with live sensor feeds and controls')}
-                </CardDescription>
-              </div>
-              <Button variant="outline" size="sm" asChild>
-                <a href={nodeRedUrl} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  {t('open_full', 'Open Full')}
-                </a>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="relative">
-                <iframe
-                  key={iframeKey}
-                  src={nodeRedUrl}
-                  className="w-full h-[600px] border rounded-lg shadow-sm"
-                  title="Node-RED IoT Dashboard"
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-top-navigation"
-                  scrolling="yes"
-                  style={{ zIndex: 5 }}
-                  onLoad={() => {
-                    // Immediately mark as loaded
-                    setIframeLoaded(true);
-                    setIframeError(null);
-                  }}
-                />
-                <div className={`absolute top-3 right-3 px-2 py-1 rounded text-xs font-medium shadow-sm ${iframeError ? "bg-gray-400" : "bg-green-500 text-white animate-pulse"}`}>
-                  {iframeError ? t('offline', 'OFFLINE') : t('live', 'LIVE')}
+          {/* 2. Adafruit IO Dashboard */}
+          <Card className={`hover:shadow-md transition-shadow ${isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''}`}>
+            {/* Enhanced Header */}
+            <CardHeader className="bg-gradient-to-r from-[#21808D] to-[#0D5E68] text-white">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-semibold flex items-center">
+                    🌾 {t('adafruit_dashboard', 'Adafruit IO Dashboard')}
+                  </CardTitle>
+                  <CardDescription className="text-blue-100">
+                    {t('adafruit_desc', 'Live IoT sensor dashboard and controls')}
+                  </CardDescription>
                 </div>
-                {iframeError && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                    <div className="bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/30 dark:border-red-900 dark:text-red-200 px-4 py-3 rounded-md text-sm max-w-md text-center">
-                      {iframeError}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-3"
-                      onClick={() => {
-                        setIframeLoaded(false);
-                        setIframeError(null);
-                        setIframeKey((k) => k + 1);
-                      }}
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium">Live</span>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+
+            {/* Control Bar */}
+            <div className="bg-gray-50 px-6 py-4 border-b">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  <span>{t('snapshot_warning', 'Dashboard shows snapshot data. Click refresh for latest readings.')}</span>
+                </div>
+
+                <div className="flex items-center space-x-2 flex-wrap">
+                  {/* Auto-refresh Toggle */}
+                  <div className="flex items-center space-x-2 bg-white px-3 py-1 rounded-md border">
+                    <span className="text-sm text-gray-600">Auto-refresh (60s)</span>
+                    <button
+                      onClick={toggleAutoRefresh}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        autoRefreshEnabled ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
                     >
-                      <RefreshCw className="h-3 w-3 mr-2" /> {t('retry', 'Retry')}
-                    </Button>
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          autoRefreshEnabled ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Control Buttons */}
+                  <Button
+                    onClick={refreshDashboard}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
+
+                  <Button
+                    onClick={toggleFullscreen}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white"
+                  >
+                    {isFullscreen ? '🗗 Exit Fullscreen' : '⛶ Fullscreen'}
+                  </Button>
+
+                  <Button
+                    onClick={openInNewTab}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    {t('open_external', 'Open External')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Adafruit Gauges (custom implementation) */}
+            <CardContent className="p-0">
+              <div className="p-6">
+                <AdafruitGauges />
+              </div>
+                {/* Loading Overlay */}
+                {!iframeLoaded && !iframeError && (
+                  <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-10">
+                    <RefreshCw className="h-12 w-12 animate-spin text-[#21808D] mb-4" />
+                    <p className="text-gray-600 text-lg">{t('loading_dashboard', 'Loading warehouse data...')}</p>
                   </div>
                 )}
+
+                {/* Error Overlay */}
+                {iframeError && (
+                  <div className="absolute inset-0 bg-white flex flex-col items-center justify-center z-10 text-center p-8">
+                    <AlertTriangle className="h-16 w-16 text-red-500 mb-4" />
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {t('iframe_error', 'Failed to Load Dashboard')}
+                    </h3>
+                    <p className="text-gray-600 mb-6 max-w-md">
+                      {iframeError}
+                    </p>
+                    <div className="flex space-x-3">
+                      <Button onClick={refreshDashboard} className="bg-[#21808D] hover:bg-[#0D5E68]">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        {t('retry', 'Retry')}
+                      </Button>
+                      <Button onClick={openInNewTab} variant="outline">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        {t('open_browser', 'Open in Browser')}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Iframe */}
+                <iframe
+                  key={iframeKey}
+                  src={iframeUrl}
+                  className="w-full h-full border-0"
+                  title="Adafruit IO Dashboard - Pinto Park Live"
+                  onLoad={() => {
+                    setIframeLoaded(true);
+                    setIframeError(null);
+                    setLastUpdated(new Date());
+                  }}
+                  onError={() => {
+                    setIframeError('Failed to load Adafruit IO dashboard. The site may not allow embedding.');
+                    setIframeLoaded(false);
+                  }}
+                  allow="fullscreen"
+                  sandbox="allow-scripts allow-same-origin allow-forms"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+
+                {/* Footer Info */}
+                <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600">
+                    <div className="flex items-center space-x-4">
+                      <span>
+                        <strong>{t('last_updated', 'Last Updated')}:</strong> {formatTimestamp(lastUpdated)}
+                      </span>
+                      <span className="hidden sm:inline">•</span>
+                      <span>
+                        {t('powered_by', 'Powered by')} <a href="https://io.adafruit.com" target="_blank" rel="noopener noreferrer" className="text-[#21808D] hover:underline">Adafruit IO</a>
+                      </span>
+                    </div>
+                    <div className="mt-2 sm:mt-0">
+                      <a href="/support" className="text-[#21808D] hover:underline flex items-center">
+                        <span className="mr-1">📞</span>
+                        {t('contact_support', 'Contact Support')}
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

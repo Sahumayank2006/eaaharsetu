@@ -1,10 +1,25 @@
 import { useState, useEffect } from 'react';
-import type { SensorStats } from '@/lib/sensor-data';
+
+interface SensorStats {
+  avgTemperature: number;
+  avgHumidity: number;
+  minTemperature: number;
+  maxTemperature: number;
+  minHumidity: number;
+  maxHumidity: number;
+  totalReadings: number;
+  lastReading: {
+    timestamp: string;
+    temperature: number;
+    humidity: number;
+    warehouse_id: string;
+  } | null;
+}
 
 interface ChartDataPoint {
   time: string;
   temperature: number;
-  humidity: number;
+  humidity: number | null;
 }
 
 interface UseSensorDataReturn {
@@ -13,6 +28,7 @@ interface UseSensorDataReturn {
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
+  source: 'adafruit-io' | 'csv-fallback';
 }
 
 export function useSensorData(
@@ -23,12 +39,13 @@ export function useSensorData(
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<'adafruit-io' | 'csv-fallback'>('adafruit-io');
 
   const fetchSensorData = async () => {
     try {
       setError(null);
-      
-      // Fetch stats and chart data in parallel with warehouse_id parameter
+
+      // Fetch stats and chart data in parallel
       const [statsResponse, chartResponse] = await Promise.all([
         fetch(`/api/sensor-data?type=stats&warehouse_id=${warehouseId}`),
         fetch(`/api/sensor-data?type=chart&hours=12&warehouse_id=${warehouseId}`)
@@ -43,6 +60,7 @@ export function useSensorData(
 
       if (statsData.success) {
         setStats(statsData.data);
+        setSource(statsData.source || 'adafruit-io');
       } else {
         throw new Error(statsData.error || 'Failed to get stats data');
       }
@@ -82,6 +100,7 @@ export function useSensorData(
     chartData,
     isLoading,
     error,
-    refetch
+    refetch,
+    source
   };
 }
