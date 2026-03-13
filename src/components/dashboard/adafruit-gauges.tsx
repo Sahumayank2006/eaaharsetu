@@ -5,6 +5,15 @@ import { RefreshCw, WifiOff, Wifi, Thermometer, Droplets, TrendingUp, TrendingDo
 
 const ADAFRUIT_USERNAME = process.env.NEXT_PUBLIC_ADAFRUIT_USERNAME || "sillypari";
 const ADAFRUIT_API_KEY = process.env.NEXT_PUBLIC_ADAFRUIT_IO_KEY || "";
+
+if (!ADAFRUIT_API_KEY && typeof window !== "undefined") {
+  console.error(
+    "[AdafruitGauges] NEXT_PUBLIC_ADAFRUIT_IO_KEY is not set in .env.local. " +
+    "Live gauge data will not load (401 Unauthorized). " +
+    "Add NEXT_PUBLIC_ADAFRUIT_IO_KEY=aio_xxx to your .env.local file."
+  );
+}
+
 const API_BASE = `https://io.adafruit.com/api/v2/${ADAFRUIT_USERNAME}`;
 const REFRESH_INTERVAL = 30000; // 30s
 

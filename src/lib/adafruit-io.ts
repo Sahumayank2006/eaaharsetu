@@ -39,12 +39,17 @@ class AdafruitIOService {
   private headers: { 'X-AIO-Key': string; 'Content-Type': string };
 
   constructor() {
-    this.username = process.env.ADAFRUIT_IO_USERNAME || 'sillypari';
-    // Do NOT hard-code API keys. Use an environment variable and set it in your deployment.
+    this.username = process.env.ADAFRUIT_IO_USERNAME || process.env.NEXT_PUBLIC_ADAFRUIT_USERNAME || 'sillypari';
+    // Do NOT hard-code API keys. Set ADAFRUIT_IO_KEY in .env.local for server-side API routes.
     // Example (Windows PowerShell): $env:ADAFRUIT_IO_KEY = "aio_xxx"
+    // Example (.env.local): ADAFRUIT_IO_KEY=aio_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
     this.apiKey = process.env.ADAFRUIT_IO_KEY || '';
     if (!this.apiKey) {
-      console.warn('ADAFRUIT_IO_KEY is not set. Adafruit IO requests will fail until the key is configured.');
+      console.error(
+        '[AdafruitIO] ADAFRUIT_IO_KEY is not set in .env.local. ' +
+        'All Adafruit IO requests will return 401 Unauthorized. ' +
+        'Get your key from https://io.adafruit.com → My Key and add it to .env.local'
+      );
     }
     this.baseURL = process.env.ADAFRUIT_IO_BASE_URL || 'https://io.adafruit.com/api/v2';
     this.headers = {
@@ -81,34 +86,45 @@ class AdafruitIOService {
    */
   async getAllWarehouseData(): Promise<WarehouseSensorData> {
     try {
-      const [temperature, humidity, tempMin, tempMax, humMin, humMax, status] =
-        await Promise.all([
-          this.getLatestData('temperature'),
-          this.getLatestData('humidity'),
+      // Fetch required feeds (temperature & humidity) — fail fast if these are missing
+      const [temperature, humidity] = await Promise.all([
+        this.getLatestData('temperature'),
+        this.getLatestData('humidity'),
+      ]);
+
+      // Fetch optional extreme/status feeds — don't fail if they don't exist on this account
+      const [tempMinRes, tempMaxRes, humMinRes, humMaxRes, statusRes] =
+        await Promise.allSettled([
           this.getLatestData('temp-min'),
           this.getLatestData('temp-max'),
           this.getLatestData('hum-min'),
           this.getLatestData('hum-max'),
-          this.getLatestData('status')
+          this.getLatestData('status'),
         ]);
+
+      const getValue = (res: PromiseSettledResult<AdafruitDataPoint>, fallback: number) =>
+        res.status === 'fulfilled' ? res.value.value : fallback;
 
       return {
         current: {
           temperature: temperature.value,
           humidity: humidity.value,
           timestamp: temperature.timestamp,
-          status: status.value === 1 ? "online" : "offline"
+          status:
+            statusRes.status === 'fulfilled' && statusRes.value.value === 1
+              ? 'online'
+              : 'offline',
         },
         extremes: {
           temperature: {
-            min: tempMin.value,
-            max: tempMax.value
+            min: getValue(tempMinRes, temperature.value),
+            max: getValue(tempMaxRes, temperature.value),
           },
           humidity: {
-            min: humMin.value,
-            max: humMax.value
-          }
-        }
+            min: getValue(humMinRes, humidity.value),
+            max: getValue(humMaxRes, humidity.value),
+          },
+        },
       };
     } catch (error) {
       console.error('Error fetching warehouse data:', error);

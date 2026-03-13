@@ -72,15 +72,31 @@ export async function GET(request: Request) {
           );
 
           const chartData = sortedTempData.map(tempPoint => {
-            const humPoint = humData.find(h => h.timestamp === tempPoint.timestamp);
+            // Use closest-time match instead of exact timestamp equality,
+            // since temperature and humidity feeds send data at slightly different times
+            const tempEpoch = new Date(tempPoint.timestamp).getTime();
+            let humPoint: typeof humData[0] | undefined;
+            let minDiff = Infinity;
+            for (const h of humData) {
+              const diff = Math.abs(new Date(h.timestamp).getTime() - tempEpoch);
+              if (diff < minDiff) {
+                minDiff = diff;
+                humPoint = h;
+              }
+            }
+            // Only use the humidity reading if it's within 5 minutes of the temperature reading
+            const humValue =
+              humPoint && minDiff < 5 * 60 * 1000 && Number.isFinite(humPoint.value)
+                ? humPoint.value
+                : null;
             return {
               time: new Date(tempPoint.timestamp).toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit'
               }),
-              timestamp: tempPoint.timestamp, // Keep full timestamp for debugging
+              timestamp: tempPoint.timestamp,
               temperature: Number.isFinite(tempPoint.value) ? tempPoint.value : null,
-              humidity: humPoint && Number.isFinite(humPoint.value) ? humPoint.value : null
+              humidity: humValue
             };
           });
 
